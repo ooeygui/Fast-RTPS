@@ -63,6 +63,7 @@ RTPSWriter::RTPSWriter(
 #if HAVE_SECURITY
     , encrypt_payload_(mp_history->getTypeMaxSerialized())
 #endif
+    , next_{nullptr}
 {
     mp_history->mp_writer = this;
     mp_history->mp_mutex = &mp_mutex;

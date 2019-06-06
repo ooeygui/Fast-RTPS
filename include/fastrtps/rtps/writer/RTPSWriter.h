@@ -50,6 +50,8 @@ class RTPSWriter : public Endpoint, public RTPSMessageSenderInterface
     friend class WriterHistory;
     friend class RTPSParticipantImpl;
     friend class RTPSMessageGroup;
+    friend class AsyncInterestTree;
+
 protected:
     RTPSWriter(
             RTPSParticipantImpl*,
@@ -366,6 +368,8 @@ protected:
 private:
 
     RTPSWriter& operator=(const RTPSWriter&) = delete;
+
+    RTPSWriter* next_[2];
 };
 
 }
