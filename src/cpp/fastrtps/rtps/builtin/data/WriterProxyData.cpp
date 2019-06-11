@@ -38,9 +38,7 @@ WriterProxyData::WriterProxyData()
 #endif
     , m_typeMaxSerialized(0)
     , m_topicKind(NO_KEY)
-    , m_topicDiscoveryKind(NO_CHECK)
     {
-        // TODO Auto-generated constructor stub
     }
 
 WriterProxyData::WriterProxyData(const WriterProxyData& writerInfo)
@@ -61,9 +59,9 @@ WriterProxyData::WriterProxyData(const WriterProxyData& writerInfo)
     , m_typeMaxSerialized(writerInfo.m_typeMaxSerialized)
     , m_topicKind(writerInfo.m_topicKind)
     , persistence_guid_(writerInfo.persistence_guid_)
-    , m_topicDiscoveryKind(writerInfo.m_topicDiscoveryKind)
     , m_type_id(writerInfo.m_type_id)
     , m_type(writerInfo.m_type)
+    , m_type_information(writerInfo.m_type_information)
 {
     m_qos.setQos(writerInfo.m_qos, true);
 }
@@ -91,9 +89,9 @@ WriterProxyData& WriterProxyData::operator=(const WriterProxyData& writerInfo)
     m_topicKind = writerInfo.m_topicKind;
     persistence_guid_ = writerInfo.persistence_guid_;
     m_qos.setQos(writerInfo.m_qos, true);
-    m_topicDiscoveryKind = writerInfo.m_topicDiscoveryKind;
     m_type_id = writerInfo.m_type_id;
     m_type = writerInfo.m_type;
+    m_type_information = writerInfo.m_type_information;
 
     return *this;
 }
@@ -154,92 +152,90 @@ bool WriterProxyData::writeToCDRMessage(CDRMessage_t* msg, bool write_encapsulat
         ParameterGuid_t p(PID_PERSISTENCE_GUID, 16, persistence_guid_);
         if (!p.addToCDRMessage(msg)) return false;
     }
-    if( m_qos.m_durability.sendAlways() || m_qos.m_durability.hasChanged)
+    if( m_qos.m_durability.sendAlways() || m_qos.m_durability.hasChanged())
     {
         if (!m_qos.m_durability.addToCDRMessage(msg)) return false;
     }
-    if(m_qos.m_durabilityService.sendAlways() || m_qos.m_durabilityService.hasChanged)
+    if(m_qos.m_durabilityService.sendAlways() || m_qos.m_durabilityService.hasChanged())
     {
         if (!m_qos.m_durabilityService.addToCDRMessage(msg)) return false;
     }
-    if(m_qos.m_deadline.sendAlways() ||  m_qos.m_deadline.hasChanged)
+    if(m_qos.m_deadline.sendAlways() ||  m_qos.m_deadline.hasChanged())
     {
         if (!m_qos.m_deadline.addToCDRMessage(msg)) return false;
     }
-    if(m_qos.m_latencyBudget.sendAlways() ||  m_qos.m_latencyBudget.hasChanged)
+    if(m_qos.m_latencyBudget.sendAlways() ||  m_qos.m_latencyBudget.hasChanged())
     {
         if (!m_qos.m_latencyBudget.addToCDRMessage(msg)) return false;
     }
-    if(m_qos.m_durability.sendAlways() ||  m_qos.m_liveliness.hasChanged)
+    if(m_qos.m_durability.sendAlways() ||  m_qos.m_liveliness.hasChanged())
     {
         if (!m_qos.m_liveliness.addToCDRMessage(msg)) return false;
     }
-    if(m_qos.m_reliability.sendAlways() ||  m_qos.m_reliability.hasChanged)
+    if(m_qos.m_reliability.sendAlways() ||  m_qos.m_reliability.hasChanged())
     {
         if (!m_qos.m_reliability.addToCDRMessage(msg)) return false;
     }
-    if(m_qos.m_lifespan.sendAlways() ||  m_qos.m_lifespan.hasChanged)
+    if(m_qos.m_lifespan.sendAlways() ||  m_qos.m_lifespan.hasChanged())
     {
         if (!m_qos.m_lifespan.addToCDRMessage(msg)) return false;
     }
-    if( m_qos.m_userData.sendAlways() || m_qos.m_userData.hasChanged)
+    if( m_qos.m_userData.sendAlways() || m_qos.m_userData.hasChanged())
     {
         if (!m_qos.m_userData.addToCDRMessage(msg)) return false;
     }
-    if(m_qos.m_timeBasedFilter.sendAlways() ||  m_qos.m_timeBasedFilter.hasChanged)
+    if(m_qos.m_timeBasedFilter.sendAlways() ||  m_qos.m_timeBasedFilter.hasChanged())
     {
         if (!m_qos.m_timeBasedFilter.addToCDRMessage(msg)) return false;
     }
-    if(m_qos.m_ownership.sendAlways() ||  m_qos.m_ownership.hasChanged)
+    if(m_qos.m_ownership.sendAlways() ||  m_qos.m_ownership.hasChanged())
     {
         if (!m_qos.m_ownership.addToCDRMessage(msg)) return false;
     }
-    if(m_qos.m_durability.sendAlways() ||  m_qos.m_ownershipStrength.hasChanged)
+    if(m_qos.m_durability.sendAlways() ||  m_qos.m_ownershipStrength.hasChanged())
     {
         if (!m_qos.m_ownershipStrength.addToCDRMessage(msg)) return false;
     }
-    if(m_qos.m_destinationOrder.sendAlways() ||  m_qos.m_destinationOrder.hasChanged)
+    if(m_qos.m_destinationOrder.sendAlways() ||  m_qos.m_destinationOrder.hasChanged())
     {
         if (!m_qos.m_destinationOrder.addToCDRMessage(msg)) return false;
     }
-    if(m_qos.m_presentation.sendAlways() ||  m_qos.m_presentation.hasChanged)
+    if(m_qos.m_presentation.sendAlways() ||  m_qos.m_presentation.hasChanged())
     {
         if (!m_qos.m_presentation.addToCDRMessage(msg)) return false;
     }
-    if(m_qos.m_partition.sendAlways() ||  m_qos.m_partition.hasChanged)
+    if(m_qos.m_partition.sendAlways() ||  m_qos.m_partition.hasChanged())
     {
         if (!m_qos.m_partition.addToCDRMessage(msg)) return false;
     }
-    if(m_qos.m_topicData.sendAlways() || m_qos.m_topicData.hasChanged)
+    if(m_qos.m_topicData.sendAlways() || m_qos.m_topicData.hasChanged())
     {
         if (!m_qos.m_topicData.addToCDRMessage(msg)) return false;
     }
-    if(m_qos.m_disablePositiveACKs.sendAlways() || m_qos.m_topicData.hasChanged)
+    if(m_qos.m_disablePositiveACKs.sendAlways() || m_qos.m_topicData.hasChanged())
     {
         if (!m_qos.m_disablePositiveACKs.addToCDRMessage(msg))
         {
             return false;
         }
     }
-    if(m_qos.m_groupData.sendAlways() ||  m_qos.m_groupData.hasChanged)
+    if(m_qos.m_groupData.sendAlways() ||  m_qos.m_groupData.hasChanged())
     {
         GroupDataQosPolicy*p = new GroupDataQosPolicy();
         *p = m_qos.m_groupData;
         if (!m_qos.m_groupData.addToCDRMessage(msg)) return false;
     }
 
-    if (m_topicDiscoveryKind != NO_CHECK)
+    if (m_type_id.m_type_identifier._d() != 0)
     {
-        if (m_type_id.m_type_identifier._d() != 0)
-        {
-            if (!m_type_id.addToCDRMessage(msg)) return false;
-        }
-
-        if (m_type.m_type_object._d() != 0)
-        {
-            if (!m_type.addToCDRMessage(msg)) return false;
-        }
+        if (!m_type_id.addToCDRMessage(msg)) return false;
     }
+
+    if (m_type.m_type_object._d() != 0)
+    {
+        if (!m_type.addToCDRMessage(msg)) return false;
+    }
+
 #if HAVE_SECURITY
     if ((this->security_attributes_ != 0UL) || (this->plugin_security_attributes_ != 0UL))
     {
@@ -249,6 +245,21 @@ bool WriterProxyData::writeToCDRMessage(CDRMessage_t* msg, bool write_encapsulat
         if (!p.addToCDRMessage(msg)) return false;
     }
 #endif
+
+    /* TODO - Enable when implement XCDR, XCDR2 and/or XML
+    if (m_qos.representation.sendAlways() || m_qos.representation.hasChanged())
+    {
+        if (!m_qos.representation.addToCDRMessage(msg)) return false;
+    }
+    */
+
+    if (m_type_information.assigned())
+    {
+        if (!m_type_information.addToCDRMessage(msg))
+        {
+            return false;
+        }
+    }
 
     return CDRMessage::addParameterSentinel(msg);
 }
@@ -447,11 +458,6 @@ bool WriterProxyData::readFromCDRMessage(CDRMessage_t* msg)
                 const TypeIdV1* p = dynamic_cast<const TypeIdV1*>(param);
                 assert(p != nullptr);
                 m_type_id = *p;
-                m_topicDiscoveryKind = MINIMAL;
-                if (m_type_id.m_type_identifier._d() == types::EK_COMPLETE)
-                {
-                    m_topicDiscoveryKind = COMPLETE;
-                }
                 break;
             }
             case PID_TYPE_OBJECTV1:
@@ -459,11 +465,13 @@ bool WriterProxyData::readFromCDRMessage(CDRMessage_t* msg)
                 const TypeObjectV1* p = dynamic_cast<const TypeObjectV1*>(param);
                 assert(p != nullptr);
                 m_type = *p;
-                m_topicDiscoveryKind = MINIMAL;
-                if (m_type.m_type_object._d() == types::EK_COMPLETE)
-                {
-                    m_topicDiscoveryKind = COMPLETE;
-                }
+                break;
+            }
+            case PID_TYPE_INFORMATION:
+            {
+                const XTypes::TypeInformation* p = dynamic_cast<const XTypes::TypeInformation*>(param);
+                assert(p != nullptr);
+                m_type_information = *p;
                 break;
             }
             case PID_DISABLE_POSITIVE_ACKS:
@@ -483,6 +491,21 @@ bool WriterProxyData::readFromCDRMessage(CDRMessage_t* msg)
                 plugin_security_attributes_ = p->plugin_security_attributes;
             }
 #endif
+
+            case PID_DATA_REPRESENTATION:
+            {
+                const DataRepresentationQosPolicy* p = dynamic_cast<const DataRepresentationQosPolicy*>(param);
+                assert(p != nullptr);
+                m_qos.representation = *p;
+                break;
+            }
+
+            case PID_TYPE_CONSISTENCY_ENFORCEMENT:
+            {
+                logError(RTPS_PROXY_DATA, "Received TypeConsistencyEnforcementQos from a writer, but they haven't.");
+                break;
+            }
+
             default:
             {
                 //logInfo(RTPS_PROXY_DATA,"Parameter with ID: " << (uint16_t)(param)->Pid <<" NOT CONSIDERED");
@@ -536,12 +559,9 @@ void WriterProxyData::copy(WriterProxyData* wdata)
     m_typeMaxSerialized = wdata->m_typeMaxSerialized;
     m_topicKind = wdata->m_topicKind;
     persistence_guid_ = wdata->persistence_guid_;
-    m_topicDiscoveryKind = wdata->m_topicDiscoveryKind;
-    if (m_topicDiscoveryKind != NO_CHECK)
-    {
-        m_type_id = wdata->m_type_id;
-        m_type = wdata->m_type;
-    }
+    m_type_id = wdata->m_type_id;
+    m_type = wdata->m_type;
+    m_type_information = wdata->m_type_information;
 }
 
 

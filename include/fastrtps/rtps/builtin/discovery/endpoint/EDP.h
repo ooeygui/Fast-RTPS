@@ -232,10 +232,17 @@ class EDP
          */
         bool pairingWriter(RTPSWriter* W, const ParticipantProxyData& pdata, const WriterProxyData& wdata);
 
-        static bool checkTypeIdentifier(const WriterProxyData* wdata, const ReaderProxyData* rdata);
+        bool checkDataRepresentationQos(const WriterProxyData* wdata, const ReaderProxyData* rdata) const;
 
-        static bool checkTypeIdentifier(const eprosima::fastrtps::types::TypeIdentifier * wti,
-                const eprosima::fastrtps::types::TypeIdentifier * rti);
+        bool checkTypeValidation(const WriterProxyData* wdata, const ReaderProxyData* rdata) const;
+
+        bool checkTypeIdentifier(const WriterProxyData* wdata, const ReaderProxyData* rdata) const;
+
+        bool hasTypeIdentifier(const WriterProxyData* wdata, const ReaderProxyData* rdata) const;
+
+        bool checkTypeObject(const WriterProxyData* wdata, const ReaderProxyData* rdata) const;
+
+        bool hasTypeObject(const WriterProxyData* wdata, const ReaderProxyData* rdata) const;
 };
 
 }
