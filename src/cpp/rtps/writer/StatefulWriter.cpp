@@ -128,6 +128,10 @@ StatefulWriter::~StatefulWriter()
 {
     logInfo(RTPS_WRITER,"StatefulWriter destructor");
 
+    // Before unregister writer from AsyncWriterThread, delete all flow_controllers because they register the writer in
+    // the AsyncWriterThread.
+    m_controllers.clear();
+
     mp_RTPSParticipant->async_thread().unregister_writer(this);
 
     if (disable_positive_acks_)
