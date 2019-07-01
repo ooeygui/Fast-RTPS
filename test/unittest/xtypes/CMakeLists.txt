@@ -27,34 +27,34 @@ if(NOT ((MSVC OR MSVC_IDE) AND EPROSIMA_INSTALLER))
         include_directories(${ASIO_INCLUDE_DIR})
 
         set(XTYPES_SOURCE
-            ${PROJECT_SOURCE_DIR}/src/cpp/types/AnnotationDescriptor.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/types/DynamicData.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/types/DynamicDataFactory.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/types/DynamicType.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/types/DynamicPubSubType.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/types/DynamicTypePtr.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/types/DynamicDataPtr.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/types/DynamicTypeBuilder.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/types/DynamicTypeBuilderPtr.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/types/DynamicTypeBuilderFactory.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/types/DynamicTypeMember.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/types/TypeDescriptor.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/types/MemberDescriptor.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/types/AnnotationParameterValue.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/types/TypeIdentifier.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/types/TypeIdentifierTypes.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/types/TypeObject.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/types/TypeObjectFactory.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/types/TypeObjectHashId.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/types/TypeNamesGenerator.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/types/TypesBase.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/types/BuiltinAnnotationsTypeObject.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/utils/md5.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/rtps/common/Time_t.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/log/Log.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/log/StdoutConsumer.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/qos/QosPolicies.cpp
-            ${PROJECT_SOURCE_DIR}/src/cpp/qos/ParameterTypes.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/types/AnnotationDescriptor.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/types/DynamicData.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/types/DynamicDataFactory.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/types/DynamicType.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/types/DynamicPubSubType.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/types/DynamicTypePtr.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/types/DynamicDataPtr.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/types/DynamicTypeBuilder.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/types/DynamicTypeBuilderPtr.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/types/DynamicTypeBuilderFactory.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/types/DynamicTypeMember.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/types/TypeDescriptor.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/types/MemberDescriptor.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/types/AnnotationParameterValue.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/types/TypeIdentifier.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/types/TypeIdentifierTypes.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/types/TypeObject.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/types/TypeObjectFactory.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/types/TypeObjectHashId.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/types/TypeNamesGenerator.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/types/TypesBase.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/types/BuiltinAnnotationsTypeObject.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/utils/md5.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/rtps/common/Time_t.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/log/Log.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/log/StdoutConsumer.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/qos/QosPolicies.cpp
+            ${PROJECT_SOURCE_DIR}/src/cpp/fastrtps/qos/ParameterTypes.cpp
         )
 
         set(XTYPES_TEST_SOURCE

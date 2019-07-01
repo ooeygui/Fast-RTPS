@@ -612,11 +612,6 @@ bool EDP::validMatching(const ReaderProxyData* rdata, const WriterProxyData* wda
             << rdata->topicKind());
         return false;
     }
-    if(!wdata->isAlive()) //Matching
-    {
-        logWarning(RTPS_EDP, "WriterProxyData " << wdata->guid() << " is NOT alive");
-        return false;
-    }
     if(rdata->m_qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS
             && wdata->m_qos.m_reliability.kind == BEST_EFFORT_RELIABILITY_QOS) 
         //Means our reader is reliable but hte writer is not

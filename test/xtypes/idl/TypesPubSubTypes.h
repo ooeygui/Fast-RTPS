@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-/*! 
+/*!
  * @file TypesPubSubTypes.h
  * This header file contains the declaration of the serialization functions.
  *
@@ -24,7 +24,7 @@
 #define _TYPES_PUBSUBTYPES_H_
 
 #include <fastrtps/config.h>
-#include <fastrtps/TopicDataType.h>
+#include <fastrtps/topic/TopicDataType.h>
 
 #include "Types.h"
 
@@ -42,17 +42,17 @@ class MyEnumStructPubSubType : public eprosima::fastrtps::TopicDataType {
 public:
         typedef MyEnumStruct type;
 
-	MyEnumStructPubSubType();
-	virtual ~MyEnumStructPubSubType();
-	virtual bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload) override;
-	virtual bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data) override;
+    MyEnumStructPubSubType();
+    virtual ~MyEnumStructPubSubType();
+    virtual bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload) override;
+    virtual bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data) override;
     virtual std::function<uint32_t()> getSerializedSizeProvider(void* data) override;
-	virtual bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle,
-		bool force_md5 = false) override;
-	virtual void* createData() override;
-	virtual void deleteData(void * data) override;
-	MD5 m_md5;
-	unsigned char* m_keyBuffer;
+    virtual bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle,
+        bool force_md5 = false) override;
+    virtual void* createData() override;
+    virtual void deleteData(void * data) override;
+    MD5 m_md5;
+    unsigned char* m_keyBuffer;
 };
 /*!
  * @brief This class represents the TopicDataType of the type MyBadEnumStruct defined by the user in the IDL file.
@@ -62,17 +62,17 @@ class MyBadEnumStructPubSubType : public eprosima::fastrtps::TopicDataType {
 public:
         typedef MyBadEnumStruct type;
 
-	MyBadEnumStructPubSubType();
-	virtual ~MyBadEnumStructPubSubType();
-	virtual bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload) override;
-	virtual bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data) override;
+    MyBadEnumStructPubSubType();
+    virtual ~MyBadEnumStructPubSubType();
+    virtual bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload) override;
+    virtual bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data) override;
     virtual std::function<uint32_t()> getSerializedSizeProvider(void* data) override;
-	virtual bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle,
-		bool force_md5 = false) override;
-	virtual void* createData() override;
-	virtual void deleteData(void * data) override;
-	MD5 m_md5;
-	unsigned char* m_keyBuffer;
+    virtual bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle,
+        bool force_md5 = false) override;
+    virtual void* createData() override;
+    virtual void deleteData(void * data) override;
+    MD5 m_md5;
+    unsigned char* m_keyBuffer;
 };
 typedef MyEnum MyAliasEnum;
 /*!
@@ -83,17 +83,17 @@ class MyAliasEnumStructPubSubType : public eprosima::fastrtps::TopicDataType {
 public:
         typedef MyAliasEnumStruct type;
 
-	MyAliasEnumStructPubSubType();
-	virtual ~MyAliasEnumStructPubSubType();
-	virtual bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload) override;
-	virtual bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data) override;
+    MyAliasEnumStructPubSubType();
+    virtual ~MyAliasEnumStructPubSubType();
+    virtual bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload) override;
+    virtual bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data) override;
     virtual std::function<uint32_t()> getSerializedSizeProvider(void* data) override;
-	virtual bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle,
-		bool force_md5 = false) override;
-	virtual void* createData() override;
-	virtual void deleteData(void * data) override;
-	MD5 m_md5;
-	unsigned char* m_keyBuffer;
+    virtual bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle,
+        bool force_md5 = false) override;
+    virtual void* createData() override;
+    virtual void deleteData(void * data) override;
+    MD5 m_md5;
+    unsigned char* m_keyBuffer;
 };
 /*!
  * @brief This class represents the TopicDataType of the type BasicStruct defined by the user in the IDL file.
@@ -103,17 +103,17 @@ class BasicStructPubSubType : public eprosima::fastrtps::TopicDataType {
 public:
         typedef BasicStruct type;
 
-	BasicStructPubSubType();
-	virtual ~BasicStructPubSubType();
-	virtual bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload) override;
-	virtual bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data) override;
+    BasicStructPubSubType();
+    virtual ~BasicStructPubSubType();
+    virtual bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload) override;
+    virtual bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data) override;
     virtual std::function<uint32_t()> getSerializedSizeProvider(void* data) override;
-	virtual bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle,
-		bool force_md5 = false) override;
-	virtual void* createData() override;
-	virtual void deleteData(void * data) override;
-	MD5 m_md5;
-	unsigned char* m_keyBuffer;
+    virtual bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle,
+        bool force_md5 = false) override;
+    virtual void* createData() override;
+    virtual void deleteData(void * data) override;
+    MD5 m_md5;
+    unsigned char* m_keyBuffer;
 };
 /*!
  * @brief This class represents the TopicDataType of the type BasicNamesStruct defined by the user in the IDL file.
@@ -123,17 +123,17 @@ class BasicNamesStructPubSubType : public eprosima::fastrtps::TopicDataType {
 public:
         typedef BasicNamesStruct type;
 
-	BasicNamesStructPubSubType();
-	virtual ~BasicNamesStructPubSubType();
-	virtual bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload) override;
-	virtual bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data) override;
+    BasicNamesStructPubSubType();
+    virtual ~BasicNamesStructPubSubType();
+    virtual bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload) override;
+    virtual bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data) override;
     virtual std::function<uint32_t()> getSerializedSizeProvider(void* data) override;
-	virtual bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle,
-		bool force_md5 = false) override;
-	virtual void* createData() override;
-	virtual void deleteData(void * data) override;
-	MD5 m_md5;
-	unsigned char* m_keyBuffer;
+    virtual bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle,
+        bool force_md5 = false) override;
+    virtual void* createData() override;
+    virtual void deleteData(void * data) override;
+    MD5 m_md5;
+    unsigned char* m_keyBuffer;
 };
 /*!
  * @brief This class represents the TopicDataType of the type BasicBadStruct defined by the user in the IDL file.
@@ -143,17 +143,17 @@ class BasicBadStructPubSubType : public eprosima::fastrtps::TopicDataType {
 public:
         typedef BasicBadStruct type;
 
-	BasicBadStructPubSubType();
-	virtual ~BasicBadStructPubSubType();
-	virtual bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload) override;
-	virtual bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data) override;
+    BasicBadStructPubSubType();
+    virtual ~BasicBadStructPubSubType();
+    virtual bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload) override;
+    virtual bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data) override;
     virtual std::function<uint32_t()> getSerializedSizeProvider(void* data) override;
-	virtual bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle,
-		bool force_md5 = false) override;
-	virtual void* createData() override;
-	virtual void deleteData(void * data) override;
-	MD5 m_md5;
-	unsigned char* m_keyBuffer;
+    virtual bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle,
+        bool force_md5 = false) override;
+    virtual void* createData() override;
+    virtual void deleteData(void * data) override;
+    MD5 m_md5;
+    unsigned char* m_keyBuffer;
 };
 /*!
  * @brief This class represents the TopicDataType of the type BasicWideStruct defined by the user in the IDL file.
@@ -163,17 +163,17 @@ class BasicWideStructPubSubType : public eprosima::fastrtps::TopicDataType {
 public:
         typedef BasicWideStruct type;
 
-	BasicWideStructPubSubType();
-	virtual ~BasicWideStructPubSubType();
-	virtual bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload) override;
-	virtual bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data) override;
+    BasicWideStructPubSubType();
+    virtual ~BasicWideStructPubSubType();
+    virtual bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload) override;
+    virtual bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data) override;
     virtual std::function<uint32_t()> getSerializedSizeProvider(void* data) override;
-	virtual bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle,
-		bool force_md5 = false) override;
-	virtual void* createData() override;
-	virtual void deleteData(void * data) override;
-	MD5 m_md5;
-	unsigned char* m_keyBuffer;
+    virtual bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle,
+        bool force_md5 = false) override;
+    virtual void* createData() override;
+    virtual void deleteData(void * data) override;
+    MD5 m_md5;
+    unsigned char* m_keyBuffer;
 };
 /*!
  * @brief This class represents the TopicDataType of the type BadBasicWideStruct defined by the user in the IDL file.
@@ -183,17 +183,17 @@ class BadBasicWideStructPubSubType : public eprosima::fastrtps::TopicDataType {
 public:
         typedef BadBasicWideStruct type;
 
-	BadBasicWideStructPubSubType();
-	virtual ~BadBasicWideStructPubSubType();
-	virtual bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload) override;
-	virtual bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data) override;
+    BadBasicWideStructPubSubType();
+    virtual ~BadBasicWideStructPubSubType();
+    virtual bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload) override;
+    virtual bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data) override;
     virtual std::function<uint32_t()> getSerializedSizeProvider(void* data) override;
-	virtual bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle,
-		bool force_md5 = false) override;
-	virtual void* createData() override;
-	virtual void deleteData(void * data) override;
-	MD5 m_md5;
-	unsigned char* m_keyBuffer;
+    virtual bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle,
+        bool force_md5 = false) override;
+    virtual void* createData() override;
+    virtual void deleteData(void * data) override;
+    MD5 m_md5;
+    unsigned char* m_keyBuffer;
 };
 /*!
  * @brief This class represents the TopicDataType of the type StringStruct defined by the user in the IDL file.
@@ -203,17 +203,17 @@ class StringStructPubSubType : public eprosima::fastrtps::TopicDataType {
 public:
         typedef StringStruct type;
 
-	StringStructPubSubType();
-	virtual ~StringStructPubSubType();
-	virtual bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload) override;
-	virtual bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data) override;
+    StringStructPubSubType();
+    virtual ~StringStructPubSubType();
+    virtual bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload) override;
+    virtual bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data) override;
     virtual std::function<uint32_t()> getSerializedSizeProvider(void* data) override;
-	virtual bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle,
-		bool force_md5 = false) override;
-	virtual void* createData() override;
-	virtual void deleteData(void * data) override;
-	MD5 m_md5;
-	unsigned char* m_keyBuffer;
+    virtual bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle,
+        bool force_md5 = false) override;
+    virtual void* createData() override;
+    virtual void deleteData(void * data) override;
+    MD5 m_md5;
+    unsigned char* m_keyBuffer;
 };
 /*!
  * @brief This class represents the TopicDataType of the type LargeStringStruct defined by the user in the IDL file.
@@ -223,17 +223,17 @@ class LargeStringStructPubSubType : public eprosima::fastrtps::TopicDataType {
 public:
         typedef LargeStringStruct type;
 
-	LargeStringStructPubSubType();
-	virtual ~LargeStringStructPubSubType();
-	virtual bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload) override;
-	virtual bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data) override;
+    LargeStringStructPubSubType();
+    virtual ~LargeStringStructPubSubType();
+    virtual bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload) override;
+    virtual bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data) override;
     virtual std::function<uint32_t()> getSerializedSizeProvider(void* data) override;
-	virtual bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle,
-		bool force_md5 = false) override;
-	virtual void* createData() override;
-	virtual void deleteData(void * data) override;
-	MD5 m_md5;
-	unsigned char* m_keyBuffer;
+    virtual bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle,
+        bool force_md5 = false) override;
+    virtual void* createData() override;
+    virtual void deleteData(void * data) override;
+    MD5 m_md5;
+    unsigned char* m_keyBuffer;
 };
 /*!
  * @brief This class represents the TopicDataType of the type WStringStruct defined by the user in the IDL file.
@@ -243,17 +243,17 @@ class WStringStructPubSubType : public eprosima::fastrtps::TopicDataType {
 public:
         typedef WStringStruct type;
 
-	WStringStructPubSubType();
-	virtual ~WStringStructPubSubType();
-	virtual bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload) override;
-	virtual bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data) override;
+    WStringStructPubSubType();
+    virtual ~WStringStructPubSubType();
+    virtual bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload) override;
+    virtual bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data) override;
     virtual std::function<uint32_t()> getSerializedSizeProvider(void* data) override;
-	virtual bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle,
-		bool force_md5 = false) override;
-	virtual void* createData() override;
-	virtual void deleteData(void * data) override;
-	MD5 m_md5;
-	unsigned char* m_keyBuffer;
+    virtual bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle,
+        bool force_md5 = false) override;
+    virtual void* createData() override;
+    virtual void deleteData(void * data) override;
+    MD5 m_md5;
+    unsigned char* m_keyBuffer;
 };
 /*!
  * @brief This class represents the TopicDataType of the type LargeWStringStruct defined by the user in the IDL file.
@@ -263,17 +263,17 @@ class LargeWStringStructPubSubType : public eprosima::fastrtps::TopicDataType {
 public:
         typedef LargeWStringStruct type;
 
-	LargeWStringStructPubSubType();
-	virtual ~LargeWStringStructPubSubType();
-	virtual bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload) override;
-	virtual bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data) override;
+    LargeWStringStructPubSubType();
+    virtual ~LargeWStringStructPubSubType();
+    virtual bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload) override;
+    virtual bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data) override;
     virtual std::function<uint32_t()> getSerializedSizeProvider(void* data) override;
-	virtual bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle,
-		bool force_md5 = false) override;
-	virtual void* createData() override;
-	virtual void deleteData(void * data) override;
-	MD5 m_md5;
-	unsigned char* m_keyBuffer;
+    virtual bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle,
+        bool force_md5 = false) override;
+    virtual void* createData() override;
+    virtual void deleteData(void * data) override;
+    MD5 m_md5;
+    unsigned char* m_keyBuffer;
 };
 /*!
  * @brief This class represents the TopicDataType of the type ArrayStruct defined by the user in the IDL file.
@@ -283,17 +283,17 @@ class ArrayStructPubSubType : public eprosima::fastrtps::TopicDataType {
 public:
         typedef ArrayStruct type;
 
-	ArrayStructPubSubType();
-	virtual ~ArrayStructPubSubType();
-	virtual bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload) override;
-	virtual bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data) override;
+    ArrayStructPubSubType();
+    virtual ~ArrayStructPubSubType();
+    virtual bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload) override;
+    virtual bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data) override;
     virtual std::function<uint32_t()> getSerializedSizeProvider(void* data) override;
-	virtual bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle,
-		bool force_md5 = false) override;
-	virtual void* createData() override;
-	virtual void deleteData(void * data) override;
-	MD5 m_md5;
-	unsigned char* m_keyBuffer;
+    virtual bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle,
+        bool force_md5 = false) override;
+    virtual void* createData() override;
+    virtual void deleteData(void * data) override;
+    MD5 m_md5;
+    unsigned char* m_keyBuffer;
 };
 /*!
  * @brief This class represents the TopicDataType of the type ArrayStructEqual defined by the user in the IDL file.
@@ -303,17 +303,17 @@ class ArrayStructEqualPubSubType : public eprosima::fastrtps::TopicDataType {
 public:
         typedef ArrayStructEqual type;
 
-	ArrayStructEqualPubSubType();
-	virtual ~ArrayStructEqualPubSubType();
-	virtual bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload) override;
-	virtual bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data) override;
+    ArrayStructEqualPubSubType();
+    virtual ~ArrayStructEqualPubSubType();
+    virtual bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload) override;
+    virtual bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data) override;
     virtual std::function<uint32_t()> getSerializedSizeProvider(void* data) override;
-	virtual bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle,
-		bool force_md5 = false) override;
-	virtual void* createData() override;
-	virtual void deleteData(void * data) override;
-	MD5 m_md5;
-	unsigned char* m_keyBuffer;
+    virtual bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle,
+        bool force_md5 = false) override;
+    virtual void* createData() override;
+    virtual void deleteData(void * data) override;
+    MD5 m_md5;
+    unsigned char* m_keyBuffer;
 };
 /*!
  * @brief This class represents the TopicDataType of the type ArrayBadStruct defined by the user in the IDL file.
@@ -323,17 +323,17 @@ class ArrayBadStructPubSubType : public eprosima::fastrtps::TopicDataType {
 public:
         typedef ArrayBadStruct type;
 
-	ArrayBadStructPubSubType();
-	virtual ~ArrayBadStructPubSubType();
-	virtual bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload) override;
-	virtual bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data) override;
+    ArrayBadStructPubSubType();
+    virtual ~ArrayBadStructPubSubType();
+    virtual bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload) override;
+    virtual bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data) override;
     virtual std::function<uint32_t()> getSerializedSizeProvider(void* data) override;
-	virtual bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle,
-		bool force_md5 = false) override;
-	virtual void* createData() override;
-	virtual void deleteData(void * data) override;
-	MD5 m_md5;
-	unsigned char* m_keyBuffer;
+    virtual bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle,
+        bool force_md5 = false) override;
+    virtual void* createData() override;
+    virtual void deleteData(void * data) override;
+    MD5 m_md5;
+    unsigned char* m_keyBuffer;
 };
 /*!
  * @brief This class represents the TopicDataType of the type ArrayDimensionsStruct defined by the user in the IDL file.
@@ -343,17 +343,17 @@ class ArrayDimensionsStructPubSubType : public eprosima::fastrtps::TopicDataType
 public:
         typedef ArrayDimensionsStruct type;
 
-	ArrayDimensionsStructPubSubType();
-	virtual ~ArrayDimensionsStructPubSubType();
-	virtual bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload) override;
-	virtual bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data) override;
+    ArrayDimensionsStructPubSubType();
+    virtual ~ArrayDimensionsStructPubSubType();
+    virtual bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload) override;
+    virtual bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data) override;
     virtual std::function<uint32_t()> getSerializedSizeProvider(void* data) override;
-	virtual bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle,
-		bool force_md5 = false) override;
-	virtual void* createData() override;
-	virtual void deleteData(void * data) override;
-	MD5 m_md5;
-	unsigned char* m_keyBuffer;
+    virtual bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle,
+        bool force_md5 = false) override;
+    virtual void* createData() override;
+    virtual void deleteData(void * data) override;
+    MD5 m_md5;
+    unsigned char* m_keyBuffer;
 };
 /*!
  * @brief This class represents the TopicDataType of the type ArraySizeStruct defined by the user in the IDL file.
@@ -363,17 +363,17 @@ class ArraySizeStructPubSubType : public eprosima::fastrtps::TopicDataType {
 public:
         typedef ArraySizeStruct type;
 
-	ArraySizeStructPubSubType();
-	virtual ~ArraySizeStructPubSubType();
-	virtual bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload) override;
-	virtual bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data) override;
+    ArraySizeStructPubSubType();
+    virtual ~ArraySizeStructPubSubType();
+    virtual bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload) override;
+    virtual bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data) override;
     virtual std::function<uint32_t()> getSerializedSizeProvider(void* data) override;
-	virtual bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle,
-		bool force_md5 = false) override;
-	virtual void* createData() override;
-	virtual void deleteData(void * data) override;
-	MD5 m_md5;
-	unsigned char* m_keyBuffer;
+    virtual bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle,
+        bool force_md5 = false) override;
+    virtual void* createData() override;
+    virtual void deleteData(void * data) override;
+    MD5 m_md5;
+    unsigned char* m_keyBuffer;
 };
 /*!
  * @brief This class represents the TopicDataType of the type SequenceStruct defined by the user in the IDL file.
@@ -383,17 +383,17 @@ class SequenceStructPubSubType : public eprosima::fastrtps::TopicDataType {
 public:
         typedef SequenceStruct type;
 
-	SequenceStructPubSubType();
-	virtual ~SequenceStructPubSubType();
-	virtual bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload) override;
-	virtual bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data) override;
+    SequenceStructPubSubType();
+    virtual ~SequenceStructPubSubType();
+    virtual bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload) override;
+    virtual bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data) override;
     virtual std::function<uint32_t()> getSerializedSizeProvider(void* data) override;
-	virtual bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle,
-		bool force_md5 = false) override;
-	virtual void* createData() override;
-	virtual void deleteData(void * data) override;
-	MD5 m_md5;
-	unsigned char* m_keyBuffer;
+    virtual bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle,
+        bool force_md5 = false) override;
+    virtual void* createData() override;
+    virtual void deleteData(void * data) override;
+    MD5 m_md5;
+    unsigned char* m_keyBuffer;
 };
 /*!
  * @brief This class represents the TopicDataType of the type SequenceStructEqual defined by the user in the IDL file.
@@ -403,17 +403,17 @@ class SequenceStructEqualPubSubType : public eprosima::fastrtps::TopicDataType {
 public:
         typedef SequenceStructEqual type;
 
-	SequenceStructEqualPubSubType();
-	virtual ~SequenceStructEqualPubSubType();
-	virtual bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload) override;
-	virtual bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data) override;
+    SequenceStructEqualPubSubType();
+    virtual ~SequenceStructEqualPubSubType();
+    virtual bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload) override;
+    virtual bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data) override;
     virtual std::function<uint32_t()> getSerializedSizeProvider(void* data) override;
-	virtual bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle,
-		bool force_md5 = false) override;
-	virtual void* createData() override;
-	virtual void deleteData(void * data) override;
-	MD5 m_md5;
-	unsigned char* m_keyBuffer;
+    virtual bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle,
+        bool force_md5 = false) override;
+    virtual void* createData() override;
+    virtual void deleteData(void * data) override;
+    MD5 m_md5;
+    unsigned char* m_keyBuffer;
 };
 /*!
  * @brief This class represents the TopicDataType of the type SequenceBadStruct defined by the user in the IDL file.
@@ -423,17 +423,17 @@ class SequenceBadStructPubSubType : public eprosima::fastrtps::TopicDataType {
 public:
         typedef SequenceBadStruct type;
 
-	SequenceBadStructPubSubType();
-	virtual ~SequenceBadStructPubSubType();
-	virtual bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload) override;
-	virtual bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data) override;
+    SequenceBadStructPubSubType();
+    virtual ~SequenceBadStructPubSubType();
+    virtual bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload) override;
+    virtual bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data) override;
     virtual std::function<uint32_t()> getSerializedSizeProvider(void* data) override;
-	virtual bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle,
-		bool force_md5 = false) override;
-	virtual void* createData() override;
-	virtual void deleteData(void * data) override;
-	MD5 m_md5;
-	unsigned char* m_keyBuffer;
+    virtual bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle,
+        bool force_md5 = false) override;
+    virtual void* createData() override;
+    virtual void deleteData(void * data) override;
+    MD5 m_md5;
+    unsigned char* m_keyBuffer;
 };
 /*!
  * @brief This class represents the TopicDataType of the type SequenceBoundsStruct defined by the user in the IDL file.
@@ -443,17 +443,17 @@ class SequenceBoundsStructPubSubType : public eprosima::fastrtps::TopicDataType 
 public:
         typedef SequenceBoundsStruct type;
 
-	SequenceBoundsStructPubSubType();
-	virtual ~SequenceBoundsStructPubSubType();
-	virtual bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload) override;
-	virtual bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data) override;
+    SequenceBoundsStructPubSubType();
+    virtual ~SequenceBoundsStructPubSubType();
+    virtual bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload) override;
+    virtual bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data) override;
     virtual std::function<uint32_t()> getSerializedSizeProvider(void* data) override;
-	virtual bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle,
-		bool force_md5 = false) override;
-	virtual void* createData() override;
-	virtual void deleteData(void * data) override;
-	MD5 m_md5;
-	unsigned char* m_keyBuffer;
+    virtual bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle,
+        bool force_md5 = false) override;
+    virtual void* createData() override;
+    virtual void deleteData(void * data) override;
+    MD5 m_md5;
+    unsigned char* m_keyBuffer;
 };
 /*!
  * @brief This class represents the TopicDataType of the type SequenceSequenceStruct defined by the user in the IDL file.
@@ -463,17 +463,17 @@ class SequenceSequenceStructPubSubType : public eprosima::fastrtps::TopicDataTyp
 public:
         typedef SequenceSequenceStruct type;
 
-	SequenceSequenceStructPubSubType();
-	virtual ~SequenceSequenceStructPubSubType();
-	virtual bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload) override;
-	virtual bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data) override;
+    SequenceSequenceStructPubSubType();
+    virtual ~SequenceSequenceStructPubSubType();
+    virtual bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload) override;
+    virtual bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data) override;
     virtual std::function<uint32_t()> getSerializedSizeProvider(void* data) override;
-	virtual bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle,
-		bool force_md5 = false) override;
-	virtual void* createData() override;
-	virtual void deleteData(void * data) override;
-	MD5 m_md5;
-	unsigned char* m_keyBuffer;
+    virtual bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle,
+        bool force_md5 = false) override;
+    virtual void* createData() override;
+    virtual void deleteData(void * data) override;
+    MD5 m_md5;
+    unsigned char* m_keyBuffer;
 };
 /*!
  * @brief This class represents the TopicDataType of the type SequenceSequenceBoundsStruct defined by the user in the IDL file.
@@ -483,17 +483,17 @@ class SequenceSequenceBoundsStructPubSubType : public eprosima::fastrtps::TopicD
 public:
         typedef SequenceSequenceBoundsStruct type;
 
-	SequenceSequenceBoundsStructPubSubType();
-	virtual ~SequenceSequenceBoundsStructPubSubType();
-	virtual bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload) override;
-	virtual bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data) override;
+    SequenceSequenceBoundsStructPubSubType();
+    virtual ~SequenceSequenceBoundsStructPubSubType();
+    virtual bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload) override;
+    virtual bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data) override;
     virtual std::function<uint32_t()> getSerializedSizeProvider(void* data) override;
-	virtual bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle,
-		bool force_md5 = false) override;
-	virtual void* createData() override;
-	virtual void deleteData(void * data) override;
-	MD5 m_md5;
-	unsigned char* m_keyBuffer;
+    virtual bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle,
+        bool force_md5 = false) override;
+    virtual void* createData() override;
+    virtual void deleteData(void * data) override;
+    MD5 m_md5;
+    unsigned char* m_keyBuffer;
 };
 /*!
  * @brief This class represents the TopicDataType of the type MapStruct defined by the user in the IDL file.
@@ -503,17 +503,17 @@ class MapStructPubSubType : public eprosima::fastrtps::TopicDataType {
 public:
         typedef MapStruct type;
 
-	MapStructPubSubType();
-	virtual ~MapStructPubSubType();
-	virtual bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload) override;
-	virtual bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data) override;
+    MapStructPubSubType();
+    virtual ~MapStructPubSubType();
+    virtual bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload) override;
+    virtual bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data) override;
     virtual std::function<uint32_t()> getSerializedSizeProvider(void* data) override;
-	virtual bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle,
-		bool force_md5 = false) override;
-	virtual void* createData() override;
-	virtual void deleteData(void * data) override;
-	MD5 m_md5;
-	unsigned char* m_keyBuffer;
+    virtual bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle,
+        bool force_md5 = false) override;
+    virtual void* createData() override;
+    virtual void deleteData(void * data) override;
+    MD5 m_md5;
+    unsigned char* m_keyBuffer;
 };
 /*!
  * @brief This class represents the TopicDataType of the type MapStructEqual defined by the user in the IDL file.
@@ -523,17 +523,17 @@ class MapStructEqualPubSubType : public eprosima::fastrtps::TopicDataType {
 public:
         typedef MapStructEqual type;
 
-	MapStructEqualPubSubType();
-	virtual ~MapStructEqualPubSubType();
-	virtual bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload) override;
-	virtual bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data) override;
+    MapStructEqualPubSubType();
+    virtual ~MapStructEqualPubSubType();
+    virtual bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload) override;
+    virtual bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data) override;
     virtual std::function<uint32_t()> getSerializedSizeProvider(void* data) override;
-	virtual bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle,
-		bool force_md5 = false) override;
-	virtual void* createData() override;
-	virtual void deleteData(void * data) override;
-	MD5 m_md5;
-	unsigned char* m_keyBuffer;
+    virtual bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle,
+        bool force_md5 = false) override;
+    virtual void* createData() override;
+    virtual void deleteData(void * data) override;
+    MD5 m_md5;
+    unsigned char* m_keyBuffer;
 };
 /*!
  * @brief This class represents the TopicDataType of the type MapBadKeyStruct defined by the user in the IDL file.
@@ -543,17 +543,17 @@ class MapBadKeyStructPubSubType : public eprosima::fastrtps::TopicDataType {
 public:
         typedef MapBadKeyStruct type;
 
-	MapBadKeyStructPubSubType();
-	virtual ~MapBadKeyStructPubSubType();
-	virtual bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload) override;
-	virtual bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data) override;
+    MapBadKeyStructPubSubType();
+    virtual ~MapBadKeyStructPubSubType();
+    virtual bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload) override;
+    virtual bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data) override;
     virtual std::function<uint32_t()> getSerializedSizeProvider(void* data) override;
-	virtual bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle,
-		bool force_md5 = false) override;
-	virtual void* createData() override;
-	virtual void deleteData(void * data) override;
-	MD5 m_md5;
-	unsigned char* m_keyBuffer;
+    virtual bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle,
+        bool force_md5 = false) override;
+    virtual void* createData() override;
+    virtual void deleteData(void * data) override;
+    MD5 m_md5;
+    unsigned char* m_keyBuffer;
 };
 /*!
  * @brief This class represents the TopicDataType of the type MapBadElemStruct defined by the user in the IDL file.
@@ -563,17 +563,17 @@ class MapBadElemStructPubSubType : public eprosima::fastrtps::TopicDataType {
 public:
         typedef MapBadElemStruct type;
 
-	MapBadElemStructPubSubType();
-	virtual ~MapBadElemStructPubSubType();
-	virtual bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload) override;
-	virtual bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data) override;
+    MapBadElemStructPubSubType();
+    virtual ~MapBadElemStructPubSubType();
+    virtual bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload) override;
+    virtual bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data) override;
     virtual std::function<uint32_t()> getSerializedSizeProvider(void* data) override;
-	virtual bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle,
-		bool force_md5 = false) override;
-	virtual void* createData() override;
-	virtual void deleteData(void * data) override;
-	MD5 m_md5;
-	unsigned char* m_keyBuffer;
+    virtual bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle,
+        bool force_md5 = false) override;
+    virtual void* createData() override;
+    virtual void deleteData(void * data) override;
+    MD5 m_md5;
+    unsigned char* m_keyBuffer;
 };
 /*!
  * @brief This class represents the TopicDataType of the type MapBoundsStruct defined by the user in the IDL file.
@@ -583,17 +583,17 @@ class MapBoundsStructPubSubType : public eprosima::fastrtps::TopicDataType {
 public:
         typedef MapBoundsStruct type;
 
-	MapBoundsStructPubSubType();
-	virtual ~MapBoundsStructPubSubType();
-	virtual bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload) override;
-	virtual bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data) override;
+    MapBoundsStructPubSubType();
+    virtual ~MapBoundsStructPubSubType();
+    virtual bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload) override;
+    virtual bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data) override;
     virtual std::function<uint32_t()> getSerializedSizeProvider(void* data) override;
-	virtual bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle,
-		bool force_md5 = false) override;
-	virtual void* createData() override;
-	virtual void deleteData(void * data) override;
-	MD5 m_md5;
-	unsigned char* m_keyBuffer;
+    virtual bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle,
+        bool force_md5 = false) override;
+    virtual void* createData() override;
+    virtual void deleteData(void * data) override;
+    MD5 m_md5;
+    unsigned char* m_keyBuffer;
 };
 /*!
  * @brief This class represents the TopicDataType of the type MapMapStruct defined by the user in the IDL file.
@@ -603,17 +603,17 @@ class MapMapStructPubSubType : public eprosima::fastrtps::TopicDataType {
 public:
         typedef MapMapStruct type;
 
-	MapMapStructPubSubType();
-	virtual ~MapMapStructPubSubType();
-	virtual bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload) override;
-	virtual bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data) override;
+    MapMapStructPubSubType();
+    virtual ~MapMapStructPubSubType();
+    virtual bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload) override;
+    virtual bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data) override;
     virtual std::function<uint32_t()> getSerializedSizeProvider(void* data) override;
-	virtual bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle,
-		bool force_md5 = false) override;
-	virtual void* createData() override;
-	virtual void deleteData(void * data) override;
-	MD5 m_md5;
-	unsigned char* m_keyBuffer;
+    virtual bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle,
+        bool force_md5 = false) override;
+    virtual void* createData() override;
+    virtual void deleteData(void * data) override;
+    MD5 m_md5;
+    unsigned char* m_keyBuffer;
 };
 /*!
  * @brief This class represents the TopicDataType of the type MapMapBoundsStruct defined by the user in the IDL file.
@@ -623,17 +623,17 @@ class MapMapBoundsStructPubSubType : public eprosima::fastrtps::TopicDataType {
 public:
         typedef MapMapBoundsStruct type;
 
-	MapMapBoundsStructPubSubType();
-	virtual ~MapMapBoundsStructPubSubType();
-	virtual bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload) override;
-	virtual bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data) override;
+    MapMapBoundsStructPubSubType();
+    virtual ~MapMapBoundsStructPubSubType();
+    virtual bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload) override;
+    virtual bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data) override;
     virtual std::function<uint32_t()> getSerializedSizeProvider(void* data) override;
-	virtual bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle,
-		bool force_md5 = false) override;
-	virtual void* createData() override;
-	virtual void deleteData(void * data) override;
-	MD5 m_md5;
-	unsigned char* m_keyBuffer;
+    virtual bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle,
+        bool force_md5 = false) override;
+    virtual void* createData() override;
+    virtual void deleteData(void * data) override;
+    MD5 m_md5;
+    unsigned char* m_keyBuffer;
 };
 
 
@@ -648,17 +648,17 @@ class SimpleUnionStructPubSubType : public eprosima::fastrtps::TopicDataType {
 public:
         typedef SimpleUnionStruct type;
 
-	SimpleUnionStructPubSubType();
-	virtual ~SimpleUnionStructPubSubType();
-	virtual bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload) override;
-	virtual bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data) override;
+    SimpleUnionStructPubSubType();
+    virtual ~SimpleUnionStructPubSubType();
+    virtual bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload) override;
+    virtual bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data) override;
     virtual std::function<uint32_t()> getSerializedSizeProvider(void* data) override;
-	virtual bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle,
-		bool force_md5 = false) override;
-	virtual void* createData() override;
-	virtual void deleteData(void * data) override;
-	MD5 m_md5;
-	unsigned char* m_keyBuffer;
+    virtual bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle,
+        bool force_md5 = false) override;
+    virtual void* createData() override;
+    virtual void deleteData(void * data) override;
+    MD5 m_md5;
+    unsigned char* m_keyBuffer;
 };
 /*!
  * @brief This class represents the TopicDataType of the type SimpleUnionStructEqual defined by the user in the IDL file.
@@ -668,17 +668,17 @@ class SimpleUnionStructEqualPubSubType : public eprosima::fastrtps::TopicDataTyp
 public:
         typedef SimpleUnionStructEqual type;
 
-	SimpleUnionStructEqualPubSubType();
-	virtual ~SimpleUnionStructEqualPubSubType();
-	virtual bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload) override;
-	virtual bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data) override;
+    SimpleUnionStructEqualPubSubType();
+    virtual ~SimpleUnionStructEqualPubSubType();
+    virtual bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload) override;
+    virtual bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data) override;
     virtual std::function<uint32_t()> getSerializedSizeProvider(void* data) override;
-	virtual bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle,
-		bool force_md5 = false) override;
-	virtual void* createData() override;
-	virtual void deleteData(void * data) override;
-	MD5 m_md5;
-	unsigned char* m_keyBuffer;
+    virtual bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle,
+        bool force_md5 = false) override;
+    virtual void* createData() override;
+    virtual void deleteData(void * data) override;
+    MD5 m_md5;
+    unsigned char* m_keyBuffer;
 };
 /*!
  * @brief This class represents the TopicDataType of the type SimpleUnionNamesStruct defined by the user in the IDL file.
@@ -688,17 +688,17 @@ class SimpleUnionNamesStructPubSubType : public eprosima::fastrtps::TopicDataTyp
 public:
         typedef SimpleUnionNamesStruct type;
 
-	SimpleUnionNamesStructPubSubType();
-	virtual ~SimpleUnionNamesStructPubSubType();
-	virtual bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload) override;
-	virtual bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data) override;
+    SimpleUnionNamesStructPubSubType();
+    virtual ~SimpleUnionNamesStructPubSubType();
+    virtual bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload) override;
+    virtual bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data) override;
     virtual std::function<uint32_t()> getSerializedSizeProvider(void* data) override;
-	virtual bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle,
-		bool force_md5 = false) override;
-	virtual void* createData() override;
-	virtual void deleteData(void * data) override;
-	MD5 m_md5;
-	unsigned char* m_keyBuffer;
+    virtual bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle,
+        bool force_md5 = false) override;
+    virtual void* createData() override;
+    virtual void deleteData(void * data) override;
+    MD5 m_md5;
+    unsigned char* m_keyBuffer;
 };
 /*!
  * @brief This class represents the TopicDataType of the type SimpleTypeUnionStruct defined by the user in the IDL file.
@@ -708,17 +708,17 @@ class SimpleTypeUnionStructPubSubType : public eprosima::fastrtps::TopicDataType
 public:
         typedef SimpleTypeUnionStruct type;
 
-	SimpleTypeUnionStructPubSubType();
-	virtual ~SimpleTypeUnionStructPubSubType();
-	virtual bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload) override;
-	virtual bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data) override;
+    SimpleTypeUnionStructPubSubType();
+    virtual ~SimpleTypeUnionStructPubSubType();
+    virtual bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload) override;
+    virtual bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data) override;
     virtual std::function<uint32_t()> getSerializedSizeProvider(void* data) override;
-	virtual bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle,
-		bool force_md5 = false) override;
-	virtual void* createData() override;
-	virtual void deleteData(void * data) override;
-	MD5 m_md5;
-	unsigned char* m_keyBuffer;
+    virtual bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle,
+        bool force_md5 = false) override;
+    virtual void* createData() override;
+    virtual void deleteData(void * data) override;
+    MD5 m_md5;
+    unsigned char* m_keyBuffer;
 };
 /*!
  * @brief This class represents the TopicDataType of the type SimpleBadUnionStruct defined by the user in the IDL file.
@@ -728,17 +728,17 @@ class SimpleBadUnionStructPubSubType : public eprosima::fastrtps::TopicDataType 
 public:
         typedef SimpleBadUnionStruct type;
 
-	SimpleBadUnionStructPubSubType();
-	virtual ~SimpleBadUnionStructPubSubType();
-	virtual bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload) override;
-	virtual bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data) override;
+    SimpleBadUnionStructPubSubType();
+    virtual ~SimpleBadUnionStructPubSubType();
+    virtual bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload) override;
+    virtual bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data) override;
     virtual std::function<uint32_t()> getSerializedSizeProvider(void* data) override;
-	virtual bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle,
-		bool force_md5 = false) override;
-	virtual void* createData() override;
-	virtual void deleteData(void * data) override;
-	MD5 m_md5;
-	unsigned char* m_keyBuffer;
+    virtual bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle,
+        bool force_md5 = false) override;
+    virtual void* createData() override;
+    virtual void deleteData(void * data) override;
+    MD5 m_md5;
+    unsigned char* m_keyBuffer;
 };
 /*!
  * @brief This class represents the TopicDataType of the type SimplBadDiscUnionStruct defined by the user in the IDL file.
@@ -748,17 +748,17 @@ class SimplBadDiscUnionStructPubSubType : public eprosima::fastrtps::TopicDataTy
 public:
         typedef SimplBadDiscUnionStruct type;
 
-	SimplBadDiscUnionStructPubSubType();
-	virtual ~SimplBadDiscUnionStructPubSubType();
-	virtual bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload) override;
-	virtual bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data) override;
+    SimplBadDiscUnionStructPubSubType();
+    virtual ~SimplBadDiscUnionStructPubSubType();
+    virtual bool serialize(void *data, eprosima::fastrtps::rtps::SerializedPayload_t *payload) override;
+    virtual bool deserialize(eprosima::fastrtps::rtps::SerializedPayload_t *payload, void *data) override;
     virtual std::function<uint32_t()> getSerializedSizeProvider(void* data) override;
-	virtual bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle,
-		bool force_md5 = false) override;
-	virtual void* createData() override;
-	virtual void deleteData(void * data) override;
-	MD5 m_md5;
-	unsigned char* m_keyBuffer;
+    virtual bool getKey(void *data, eprosima::fastrtps::rtps::InstanceHandle_t *ihandle,
+        bool force_md5 = false) override;
+    virtual void* createData() override;
+    virtual void deleteData(void * data) override;
+    MD5 m_md5;
+    unsigned char* m_keyBuffer;
 };
 
 #endif // _TYPES_PUBSUBTYPES_H_
