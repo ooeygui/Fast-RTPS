@@ -64,7 +64,7 @@ DomainParticipantFactory::~DomainParticipantFactory()
 {
     {
         std::lock_guard<std::mutex> guard(mtx_participants_);
-        for (auto it : participants_)
+        for (auto vit : participants_)
         {
             it.second->disable();
         }
@@ -113,12 +113,24 @@ bool DomainParticipantFactory::delete_participant(
     {
         std::lock_guard<std::mutex> guard(mtx_participants_);
 
-        auto it = participants_.find(part->get_domain_id());
+        auto vit = participants_.find(part->get_domain_id());
 
-        if (it != participants_.end())
+        if (vit != participants_.end())
         {
-            delete it->second;
-            participants_.erase(it);
+            for (auto pit = vit->second.begin(); pit != vit->second.end(); ++pit)
+            {
+                DomainParticipantImpl* p = *pit;
+                if (p->get_participant() == part
+                        || p->get_participant()->guid() == part->guid())
+                {
+                    vit->second.erase(pit);
+                    delete p;
+                }
+            }
+            if (vit->second.empty())
+            {
+                participants_.erase(vit);
+            }
             return true;
         }
     }
@@ -150,30 +162,25 @@ DomainParticipant* DomainParticipantFactory::create_participant(
         DomainParticipantListener* listen)
 {
     uint8_t domain_id = static_cast<uint8_t>(att.rtps.builtin.domainId);
-    if (lookup_participant(domain_id) == nullptr)
+
+    DomainParticipant* pubsubpar = new DomainParticipant();
+    DomainParticipantImpl* pspartimpl = new DomainParticipantImpl(att, pubsubpar, listen);
+    RTPSParticipant* part = RTPSDomain::createParticipant(att.rtps, &pspartimpl->rtps_listener_);
+
+    if (part == nullptr)
     {
-        DomainParticipant* pubsubpar = new DomainParticipant();
-        DomainParticipantImpl* pspartimpl = new DomainParticipantImpl(att, pubsubpar, listen);
-        RTPSParticipant* part = RTPSDomain::createParticipant(att.rtps, &pspartimpl->rtps_listener_);
-
-        if (part == nullptr)
-        {
-            logError(DOMAIN_PARTICIPANT_FACTORY, "Problem creating RTPSParticipant");
-            delete pspartimpl;
-            return nullptr;
-        }
-
-        pspartimpl->rtps_participant_ = part;
-
-        {
-            std::lock_guard<std::mutex> guard(mtx_participants_);
-            participants_[domain_id] = pspartimpl;
-        }
-        return pubsubpar;
+        logError(DOMAIN_PARTICIPANT_FACTORY, "Problem creating RTPSParticipant");
+        delete pspartimpl;
+        return nullptr;
     }
 
-    logError(DOMAIN_PARTICIPANT_FACTORY, "A Participant already exists in domain: " << att.rtps.builtin.domainId);
-    return nullptr;
+    pspartimpl->rtps_participant_ = part;
+
+    {
+        std::lock_guard<std::mutex> guard(mtx_participants_);
+        participants_[domain_id].push_back(pspartimpl);
+    }
+    return pubsubpar;
 }
 
 DomainParticipant* DomainParticipantFactory::lookup_participant(
@@ -184,7 +191,7 @@ DomainParticipant* DomainParticipantFactory::lookup_participant(
     auto it = participants_.find(domain_id);
     if (it != participants_.end())
     {
-        return it->second->get_participant();
+        return it->second.front()->get_participant();
     }
 
     return nullptr;

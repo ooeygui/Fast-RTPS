@@ -71,7 +71,7 @@ TEST_F(XTypes, NoTypeObjectSameType)
     pub.init("NoTypeObjectSameType", 10, &type, nullptr, nullptr, nullptr, "Pub1", nullptr);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("NoTypeObjectSameType", 10, &type, nullptr, nullptr, nullptr, "Sub1", nullptr, nullptr);
+    sub.init("NoTypeObjectSameType", 10, NO_KEY, &type, nullptr, nullptr, nullptr, "Sub1", nullptr, nullptr);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -101,7 +101,7 @@ TEST_F(XTypes, NoTypeObjectSameTypeForce)
     pub.init("NoTypeObjectSameTypeForce", 10, &type, nullptr, nullptr, nullptr, "Pub1", nullptr);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("NoTypeObjectSameTypeForce", 10, &type, nullptr, nullptr, nullptr, "Sub1", nullptr, &typeConQos);
+    sub.init("NoTypeObjectSameTypeForce", 10, NO_KEY, &type, nullptr, nullptr, nullptr, "Sub1", nullptr, &typeConQos);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -123,7 +123,7 @@ TEST_F(XTypes, NoTypeObjectDifferentType)
     pub.init("NoTypeObjectDifferentType", 10, &type, nullptr, nullptr, nullptr, "Pub1", nullptr);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("NoTypeObjectDifferentType", 10, &type2, nullptr, nullptr, nullptr, "Sub1", nullptr, nullptr);
+    sub.init("NoTypeObjectDifferentType", 10, NO_KEY, &type2, nullptr, nullptr, nullptr, "Sub1", nullptr, nullptr);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -163,7 +163,45 @@ TEST_F(XTypes, TypeObjectV1SameType)
     pub.init("TypeObjectV1SameType", 10, &type, type_obj, type_id, nullptr, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeObjectV1SameType", 10, &type, type_obj, type_id, nullptr, "Sub1", &dataRepQos, nullptr);
+    sub.init("TypeObjectV1SameType", 10, NO_KEY, &type, type_obj, type_id, nullptr, "Sub1", &dataRepQos, nullptr);
+    ASSERT_TRUE(sub.isInitialized());
+
+    // Wait for discovery.
+    sub.waitDiscovery(true, 3);
+    pub.waitDiscovery(true, 3);
+}
+
+/*
+ * TEST TYPE DISCOVERY
+ * RETRIEVE PUB's TYPE
+*/
+TEST_F(XTypes, TypeDiscovery)
+{
+    BasicStructPubSubType type;
+    const TypeObject* type_obj = GetMinimalBasicStructObject();
+    const TypeIdentifier* type_id = GetBasicStructIdentifier(false);
+    TestPublisher pub;
+    TestSubscriber sub;
+    //TypeInformation* type_info = nullptr; // Not using it
+
+    DataRepresentationQosPolicy dataRepQos;
+    dataRepQos.m_value.push_back(DataRepresentationId_t::XCDR_DATA_REPRESENTATION);
+    //dataRepQos.m_value.push_back(DataRepresentationId_t::XML_DATA_REPRESENTATION);
+    //dataRepQos.m_value.push_back(DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+
+    //TypeConsistencyEnforcementQosPolicy typeConQos;
+    //typeConQos.m_kind = TypeConsistencyKind::ALLOW_TYPE_COERCION;
+    //typeConQos.m_kind = TypeConsistencyKind::DISALLOW_TYPE_COERCION;
+    //typeConQos.m_ignore_sequence_bounds = true;
+    //typeConQos.m_ignore_string_bounds = true;
+    //typeConQos.m_ignore_member_names = true;
+    //typeConQos.m_prevent_type_widening = false;
+    //typeConQos.m_force_type_validation = false;
+
+    pub.init("TypeObjectV1SameType", 10, &type, type_obj, type_id, nullptr, "Pub1", &dataRepQos);
+    ASSERT_TRUE(pub.isInitialized());
+
+    sub.init("TypeObjectV1SameType", 10, NO_KEY, nullptr, nullptr, nullptr, nullptr, "Sub1", &dataRepQos, nullptr);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -203,7 +241,7 @@ TEST_F(XTypes, TypeObjectV1DifferentType)
     pub.init("TypeObjectV1DifferentType", 10, &type1, type_obj1, type_id1, nullptr, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeObjectV1DifferentType", 10, &type2, type_obj2, type_id2, nullptr, "Sub1", &dataRepQos, &typeConQos);
+    sub.init("TypeObjectV1DifferentType", 10, NO_KEY, &type2, type_obj2, type_id2, nullptr, "Sub1", &dataRepQos, &typeConQos);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -244,7 +282,7 @@ TEST_F(XTypes, TypeObjectV1NamesManaged)
     pub.init("TypeObjectV1NamesManaged", 10, &type1, type_obj1, type_id1, nullptr, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeObjectV1NamesManaged", 10, &type2, type_obj2, type_id2, nullptr, "Sub1", &dataRepQos, &typeConQos);
+    sub.init("TypeObjectV1NamesManaged", 10, NO_KEY, &type2, type_obj2, type_id2, nullptr, "Sub1", &dataRepQos, &typeConQos);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -285,7 +323,7 @@ TEST_F(XTypes, DISABLED_TypeObjectV1NamesIgnored)
     pub.init("TypeObjectV1NamesIgnored", 10, &type1, type_obj1, type_id1, nullptr, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeObjectV1NamesIgnored", 10, &type2, type_obj2, type_id2, nullptr, "Sub1", &dataRepQos, &typeConQos);
+    sub.init("TypeObjectV1NamesIgnored", 10, NO_KEY, &type2, type_obj2, type_id2, nullptr, "Sub1", &dataRepQos, &typeConQos);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -327,7 +365,7 @@ TEST_F(XTypes, TypeObjectV1NamesIgnoredDisallow)
     pub.init("TypeObjectV1NamesIgnoredDisallow", 10, &type1, type_obj1, type_id1, nullptr, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeObjectV1NamesIgnoredDisallow", 10, &type2, type_obj2, type_id2, nullptr, "Sub1", &dataRepQos, &typeConQos);
+    sub.init("TypeObjectV1NamesIgnoredDisallow", 10, NO_KEY, &type2, type_obj2, type_id2, nullptr, "Sub1", &dataRepQos, &typeConQos);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -368,7 +406,7 @@ TEST_F(XTypes, DISABLED_TypeObjectV1TypeWidening)
     pub.init("TypeObjectV1TypeWidening", 10, &type1, type_obj1, type_id1, nullptr, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeObjectV1TypeWidening", 10, &type2, type_obj2, type_id2, nullptr, "Sub1", &dataRepQos, &typeConQos);
+    sub.init("TypeObjectV1TypeWidening", 10, NO_KEY, &type2, type_obj2, type_id2, nullptr, "Sub1", &dataRepQos, &typeConQos);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -409,7 +447,7 @@ TEST_F(XTypes, TypeObjectV1BadTypeWidening)
     pub.init("TypeObjectV1BadTypeWidening", 10, &type1, type_obj1, type_id1, nullptr, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeObjectV1BadTypeWidening", 10, &type2, type_obj2, type_id2, nullptr, "Sub1", &dataRepQos, &typeConQos);
+    sub.init("TypeObjectV1BadTypeWidening", 10, NO_KEY, &type2, type_obj2, type_id2, nullptr, "Sub1", &dataRepQos, &typeConQos);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -450,7 +488,7 @@ TEST_F(XTypes, DISABLED_TypeObjectV1TypeWideningPreventedNarrowToWide)
     pub.init("TypeObjectV1TypeWideningPreventedNarrowToWide", 10, &type1, type_obj1, type_id1, nullptr, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeObjectV1TypeWideningPreventedNarrowToWide", 10, &type2, type_obj2, type_id2, nullptr, "Sub1", &dataRepQos, &typeConQos);
+    sub.init("TypeObjectV1TypeWideningPreventedNarrowToWide", 10, NO_KEY, &type2, type_obj2, type_id2, nullptr, "Sub1", &dataRepQos, &typeConQos);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -491,7 +529,7 @@ TEST_F(XTypes, TypeObjectV1TypeWideningPreventedWideToNarrow)
     pub.init("TypeObjectV1TypeWideningPreventedWideToNarrow", 10, &type2, type_obj2, type_id2, nullptr, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeObjectV1TypeWideningPreventedWideToNarrow", 10, &type1, type_obj1, type_id1, nullptr, "Sub1", &dataRepQos, &typeConQos);
+    sub.init("TypeObjectV1TypeWideningPreventedWideToNarrow", 10, NO_KEY, &type1, type_obj1, type_id1, nullptr, "Sub1", &dataRepQos, &typeConQos);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -532,7 +570,7 @@ TEST_F(XTypes, TypeObjectV1TypeWideningDisallow)
     pub.init("TypeObjectV1TypeWideningDisallow", 10, &type1, type_obj1, type_id1, nullptr, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeObjectV1TypeWideningDisallow", 10, &type2, type_obj2, type_id2, nullptr, "Sub1", &dataRepQos, &typeConQos);
+    sub.init("TypeObjectV1TypeWideningDisallow", 10, NO_KEY, &type2, type_obj2, type_id2, nullptr, "Sub1", &dataRepQos, &typeConQos);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -573,7 +611,7 @@ TEST_F(XTypes, DISABLED_TypeObjectV1SequenceBoundsIgnored)
     pub.init("TypeObjectV1SequenceBoundsIgnored", 10, &type1, type_obj1, type_id1, nullptr, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeObjectV1SequenceBoundsIgnored", 10, &type2, type_obj2, type_id2, nullptr, "Sub1", &dataRepQos, &typeConQos);
+    sub.init("TypeObjectV1SequenceBoundsIgnored", 10, NO_KEY, &type2, type_obj2, type_id2, nullptr, "Sub1", &dataRepQos, &typeConQos);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -614,7 +652,7 @@ TEST_F(XTypes, TypeObjectV1SequenceBoundsManaged)
     pub.init("TypeObjectV1SequenceBoundsManaged", 10, &type1, type_obj1, type_id1, nullptr, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeObjectV1SequenceBoundsManaged", 10, &type2, type_obj2, type_id2, nullptr, "Sub1", &dataRepQos, &typeConQos);
+    sub.init("TypeObjectV1SequenceBoundsManaged", 10, NO_KEY, &type2, type_obj2, type_id2, nullptr, "Sub1", &dataRepQos, &typeConQos);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -656,7 +694,7 @@ TEST_F(XTypes, DISABLED_TypeObjectV1LargeStringIgnored)
     pub.init("TypeObjectV1LargeStringIgnored", 10, &type1, type_obj1, type_id1, nullptr, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeObjectV1LargeStringIgnored", 10, &type2, type_obj2, type_id2, nullptr, "Sub1", &dataRepQos, &typeConQos);
+    sub.init("TypeObjectV1LargeStringIgnored", 10, NO_KEY, &type2, type_obj2, type_id2, nullptr, "Sub1", &dataRepQos, &typeConQos);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -698,7 +736,7 @@ TEST_F(XTypes, TypeObjectV1LargeStringManaged)
     pub.init("TypeObjectV1LargeStringManaged", 10, &type1, type_obj1, type_id1, nullptr, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeObjectV1LargeStringManaged", 10, &type2, type_obj2, type_id2, nullptr, "Sub1", &dataRepQos, &typeConQos);
+    sub.init("TypeObjectV1LargeStringManaged", 10, NO_KEY, &type2, type_obj2, type_id2, nullptr, "Sub1", &dataRepQos, &typeConQos);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -735,7 +773,7 @@ TEST_F(XTypes, TypeObjectV1SameTypeComplete)
     pub.init("TypeObjectV1SameTypeComplete", 10, &type, type_obj, type_id, nullptr, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeObjectV1SameTypeComplete", 10, &type, type_obj, type_id, nullptr, "Sub1", &dataRepQos, nullptr);
+    sub.init("TypeObjectV1SameTypeComplete", 10, NO_KEY, &type, type_obj, type_id, nullptr, "Sub1", &dataRepQos, nullptr);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -776,7 +814,7 @@ TEST_F(XTypes, TypeObjectV1InvalidComplete)
     pub.init("TypeObjectV1InvalidComplete", 10, &type1, type_obj1, type_id1, nullptr, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeObjectV1InvalidComplete", 10, &type2, type_obj2, type_id2, nullptr, "Sub1", &dataRepQos, nullptr);
+    sub.init("TypeObjectV1InvalidComplete", 10, NO_KEY, &type2, type_obj2, type_id2, nullptr, "Sub1", &dataRepQos, nullptr);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -816,7 +854,7 @@ TEST_F(XTypes, MixingMinimalAndComplete)
     pub.init("MixingMinimalAndComplete", 10, &type1, type_obj1, type_id1, nullptr, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("MixingMinimalAndComplete", 10, &type1, type_obj2, type_id2, nullptr, "Sub1", &dataRepQos, nullptr);
+    sub.init("MixingMinimalAndComplete", 10, NO_KEY, &type1, type_obj2, type_id2, nullptr, "Sub1", &dataRepQos, nullptr);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -855,7 +893,7 @@ TEST_F(XTypes, TypeIdentifierSameType)
     pub.init("TypeIdentifierSameType", 10, &type, nullptr, type_id, nullptr, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeIdentifierSameType", 10, &type, nullptr, type_id, nullptr, "Sub1", &dataRepQos, nullptr);
+    sub.init("TypeIdentifierSameType", 10, NO_KEY, &type, nullptr, type_id, nullptr, "Sub1", &dataRepQos, nullptr);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -893,7 +931,7 @@ TEST_F(XTypes, TypeIdentifierDifferentType)
     pub.init("TypeIdentifierDifferentType", 10, &type1, nullptr, type_id1, nullptr, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeIdentifierDifferentType", 10, &type2, nullptr, type_id2, nullptr, "Sub1", &dataRepQos, &typeConQos);
+    sub.init("TypeIdentifierDifferentType", 10, NO_KEY, &type2, nullptr, type_id2, nullptr, "Sub1", &dataRepQos, &typeConQos);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -932,7 +970,7 @@ TEST_F(XTypes, TypeIdentifierNamesManaged)
     pub.init("TypeIdentifierNamesManaged", 10, &type1, nullptr, type_id1, nullptr, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeIdentifierNamesManaged", 10, &type2, nullptr, type_id2, nullptr, "Sub1", &dataRepQos, &typeConQos);
+    sub.init("TypeIdentifierNamesManaged", 10, NO_KEY, &type2, nullptr, type_id2, nullptr, "Sub1", &dataRepQos, &typeConQos);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -971,7 +1009,7 @@ TEST_F(XTypes, DISABLED_TypeIdentifierNamesIgnored)
     pub.init("TypeIdentifierNamesIgnored", 10, &type1, nullptr, type_id1, nullptr, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeIdentifierNamesIgnored", 10, &type2, nullptr, type_id2, nullptr, "Sub1", &dataRepQos, &typeConQos);
+    sub.init("TypeIdentifierNamesIgnored", 10, NO_KEY, &type2, nullptr, type_id2, nullptr, "Sub1", &dataRepQos, &typeConQos);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -1009,7 +1047,7 @@ TEST_F(XTypes, TypeInformationSameType)
     pub.init("TypeInformationSameType", 10, &type, nullptr, nullptr, type_info, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeInformationSameType", 10, &type, nullptr, nullptr, type_info, "Sub1", &dataRepQos, nullptr);
+    sub.init("TypeInformationSameType", 10, NO_KEY, &type, nullptr, nullptr, type_info, "Sub1", &dataRepQos, nullptr);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -1047,7 +1085,7 @@ TEST_F(XTypes, TypeInformationDifferentType)
     pub.init("TypeInformationDifferentType", 10, &type1, nullptr, nullptr, type_info1, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeInformationDifferentType", 10, &type2, nullptr, nullptr, type_info2, "Sub1", &dataRepQos, &typeConQos);
+    sub.init("TypeInformationDifferentType", 10, NO_KEY, &type2, nullptr, nullptr, type_info2, "Sub1", &dataRepQos, &typeConQos);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -1086,7 +1124,7 @@ TEST_F(XTypes, TypeInformationNamesManaged)
     pub.init("TypeInformationNamesManaged", 10, &type1, nullptr, nullptr, type_info1, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeInformationNamesManaged", 10, &type2, nullptr, nullptr, type_info2, "Sub1", &dataRepQos, &typeConQos);
+    sub.init("TypeInformationNamesManaged", 10, NO_KEY, &type2, nullptr, nullptr, type_info2, "Sub1", &dataRepQos, &typeConQos);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -1125,7 +1163,7 @@ TEST_F(XTypes, DISABLED_TypeInformationNamesIgnored)
     pub.init("TypeInformationNamesIgnored", 10, &type1, nullptr, nullptr, type_info1, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeInformationNamesIgnored", 10, &type2, nullptr, nullptr, type_info2, "Sub1", &dataRepQos, &typeConQos);
+    sub.init("TypeInformationNamesIgnored", 10, NO_KEY, &type2, nullptr, nullptr, type_info2, "Sub1", &dataRepQos, &typeConQos);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -1150,7 +1188,7 @@ TEST_F(XTypes, TypeIdentifier_TypeObject)
     pub.init("TypeIdentifier_TypeObject", 10, &type, nullptr, type_id, nullptr, "Pub1", nullptr);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeIdentifier_TypeObject", 10, &type, type_obj, nullptr, nullptr, "Sub1", nullptr, &typeConQos);
+    sub.init("TypeIdentifier_TypeObject", 10, NO_KEY, &type, type_obj, nullptr, nullptr, "Sub1", nullptr, &typeConQos);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -1173,7 +1211,7 @@ TEST_F(XTypes, TypeIdentifier_TypeInformation)
     pub.init("TypeIdentifier_TypeInformation", 10, &type, nullptr, type_id, nullptr, "Pub1", nullptr);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeIdentifier_TypeInformation", 10, &type, nullptr, nullptr, type_info, "Sub1", nullptr, &typeConQos);
+    sub.init("TypeIdentifier_TypeInformation", 10, NO_KEY, &type, nullptr, nullptr, type_info, "Sub1", nullptr, &typeConQos);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -1196,7 +1234,7 @@ TEST_F(XTypes, TypeObject_TypeInformation)
     pub.init("TypeObject_TypeInformation", 10, &type, type_obj, nullptr, nullptr, "Pub1", nullptr);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeObject_TypeInformation", 10, &type, nullptr, nullptr, type_info, "Sub1", nullptr, &typeConQos);
+    sub.init("TypeObject_TypeInformation", 10, NO_KEY, &type, nullptr, nullptr, type_info, "Sub1", nullptr, &typeConQos);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -1223,7 +1261,7 @@ TEST_F(XTypes, DISABLED_DataRepQoSEE)
     pub.init("DataRepQoSEE", 10, &type, nullptr, nullptr, nullptr, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("DataRepQoSEE", 10, &type, nullptr, nullptr, nullptr, "Sub1", &dataRepQos, nullptr);
+    sub.init("DataRepQoSEE", 10, NO_KEY, &type, nullptr, nullptr, nullptr, "Sub1", &dataRepQos, nullptr);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -1253,7 +1291,7 @@ TEST_F(XTypes, DISABLED_DataRepQoSE1)
     pub.init("DataRepQoSE1", 10, &type, nullptr, nullptr, nullptr, "Pub1", &dataRepQos1);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("DataRepQoSE1", 10, &type, nullptr, nullptr, nullptr, "Sub1", &dataRepQos2, nullptr);
+    sub.init("DataRepQoSE1", 10, NO_KEY, &type, nullptr, nullptr, nullptr, "Sub1", &dataRepQos2, nullptr);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -1283,7 +1321,7 @@ TEST_F(XTypes, DISABLED_DataRepQoSE2)
     pub.init("DataRepQoSE2", 10, &type, nullptr, nullptr, nullptr, "Pub1", &dataRepQos1);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("DataRepQoSE2", 10, &type, nullptr, nullptr, nullptr, "Sub1", &dataRepQos2, nullptr);
+    sub.init("DataRepQoSE2", 10, NO_KEY, &type, nullptr, nullptr, nullptr, "Sub1", &dataRepQos2, nullptr);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -1313,7 +1351,7 @@ TEST_F(XTypes, DISABLED_DataRepQoSEX)
     pub.init("DataRepQoSEX", 10, &type, nullptr, nullptr, nullptr, "Pub1", &dataRepQos1);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("DataRepQoSEX", 10, &type, nullptr, nullptr, nullptr, "Sub1", &dataRepQos2, nullptr);
+    sub.init("DataRepQoSEX", 10, NO_KEY, &type, nullptr, nullptr, nullptr, "Sub1", &dataRepQos2, nullptr);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -1343,7 +1381,7 @@ TEST_F(XTypes, DISABLED_DataRepQoSE12)
     pub.init("DataRepQoSE12", 10, &type, nullptr, nullptr, nullptr, "Pub1", &dataRepQos1);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("DataRepQoSE12", 10, &type, nullptr, nullptr, nullptr, "Sub1", &dataRepQos2, nullptr);
+    sub.init("DataRepQoSE12", 10, NO_KEY, &type, nullptr, nullptr, nullptr, "Sub1", &dataRepQos2, nullptr);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -1373,7 +1411,7 @@ TEST_F(XTypes, DISABLED_DataRepQoS12)
     pub.init("DataRepQoS12", 10, &type, nullptr, nullptr, nullptr, "Pub1", &dataRepQos1);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("DataRepQoS12", 10, &type, nullptr, nullptr, nullptr, "Sub1", &dataRepQos2, nullptr);
+    sub.init("DataRepQoS12", 10, NO_KEY, &type, nullptr, nullptr, nullptr, "Sub1", &dataRepQos2, nullptr);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -1403,7 +1441,7 @@ TEST_F(XTypes, DISABLED_DataRepQoS2E)
     pub.init("DataRepQoS21", 10, &type, nullptr, nullptr, nullptr, "Pub1", &dataRepQos2);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("DataRepQoS21", 10, &type, nullptr, nullptr, nullptr, "Sub1", &dataRepQos1, nullptr);
+    sub.init("DataRepQoS21", 10, NO_KEY, &type, nullptr, nullptr, nullptr, "Sub1", &dataRepQos1, nullptr);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -1433,7 +1471,7 @@ TEST_F(XTypes, DISABLED_DataRepQoS21)
     pub.init("DataRepQoS21", 10, &type, nullptr, nullptr, nullptr, "Pub1", &dataRepQos2);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("DataRepQoS21", 10, &type, nullptr, nullptr, nullptr, "Sub1", &dataRepQos1, nullptr);
+    sub.init("DataRepQoS21", 10, NO_KEY, &type, nullptr, nullptr, nullptr, "Sub1", &dataRepQos1, nullptr);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -1458,7 +1496,7 @@ TEST_F(XTypes, DISABLED_DataRepQoS22)
     pub.init("DataRepQoS22", 10, &type, nullptr, nullptr, nullptr, "Pub1", &dataRepQos2);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("DataRepQoS22", 10, &type, nullptr, nullptr, nullptr, "Sub1", &dataRepQos2, nullptr);
+    sub.init("DataRepQoS22", 10, NO_KEY, &type, nullptr, nullptr, nullptr, "Sub1", &dataRepQos2, nullptr);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -1488,7 +1526,7 @@ TEST_F(XTypes, DISABLED_DataRepQoSXE)
     pub.init("DataRepQoSXE", 10, &type, nullptr, nullptr, nullptr, "Pub1", &dataRepQos2);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("DataRepQoSXE", 10, &type, nullptr, nullptr, nullptr, "Sub1", &dataRepQos1, nullptr);
+    sub.init("DataRepQoSXE", 10, NO_KEY, &type, nullptr, nullptr, nullptr, "Sub1", &dataRepQos1, nullptr);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -1518,7 +1556,7 @@ TEST_F(XTypes, DISABLED_DataRepQoSXX)
     pub.init("DataRepQoSXE", 10, &type, nullptr, nullptr, nullptr, "Pub1", &dataRepQos2);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("DataRepQoSXE", 10, &type, nullptr, nullptr, nullptr, "Sub1", &dataRepQos1, nullptr);
+    sub.init("DataRepQoSXE", 10, NO_KEY, &type, nullptr, nullptr, nullptr, "Sub1", &dataRepQos1, nullptr);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.

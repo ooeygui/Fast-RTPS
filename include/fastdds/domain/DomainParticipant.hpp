@@ -230,6 +230,12 @@ public:
 
     fastrtps::rtps::ResourceEvent& get_resource_event() const;
 
+    Subscriber* lookup_subscriber(
+            const fastrtps::rtps::InstanceHandle_t& handle);
+
+    Publisher* lookup_publisher(
+            const fastrtps::rtps::InstanceHandle_t& handle);
+
 private:
 
     DomainParticipant();

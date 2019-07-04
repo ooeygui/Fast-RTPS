@@ -229,6 +229,8 @@ public:
 
     const Publisher* get_publisher() const;
 
+    Publisher* get_publisher();
+
     bool assert_liveliness();
 
     //! Remove all listeners in the hierarchy to allow a quiet destruction

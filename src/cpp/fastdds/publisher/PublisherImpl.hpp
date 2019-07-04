@@ -128,6 +128,8 @@ public:
 
     const Publisher* get_publisher() const;
 
+    Publisher* get_publisher();
+
     const fastrtps::PublisherAttributes& get_attributes() const;
 
     bool set_attributes(const fastrtps::PublisherAttributes& att);

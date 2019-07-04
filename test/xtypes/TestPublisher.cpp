@@ -18,10 +18,12 @@
  */
 
 #include "TestPublisher.h"
-#include <fastrtps/participant/Participant.h>
+#include <fastdds/domain/DomainParticipantFactory.hpp>
+#include <fastdds/domain/DomainParticipant.hpp>
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/attributes/PublisherAttributes.h>
-#include <fastrtps/publisher/Publisher.h>
+#include <fastdds/publisher/Publisher.hpp>
+#include <fastdds/publisher/qos/PublisherQos.hpp>
 #include <fastrtps/transport/TCPv4TransportDescriptor.h>
 #include <fastrtps/transport/UDPv4TransportDescriptor.h>
 #include <fastrtps/transport/TCPv6TransportDescriptor.h>
@@ -31,6 +33,7 @@
 #include <fastrtps/utils/IPLocator.h>
 #include <gtest/gtest.h>
 
+using namespace eprosima::fastdds;
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
@@ -45,7 +48,10 @@ TestPublisher::TestPublisher()
 {
 }
 
-bool TestPublisher::init(const std::string& topicName, int domain, eprosima::fastrtps::TopicDataType* type,
+bool TestPublisher::init(
+        const std::string& topicName,
+        int domain,
+        eprosima::fastrtps::TopicDataType* type,
         const eprosima::fastrtps::types::TypeObject* type_object,
         const eprosima::fastrtps::types::TypeIdentifier* type_identifier,
         const eprosima::fastrtps::types::TypeInformation* type_info,
@@ -61,7 +67,7 @@ bool TestPublisher::init(const std::string& topicName, int domain, eprosima::fas
     PParam.rtps.builtin.leaseDuration_announcementperiod = Duration_t(1, 0);
     PParam.rtps.setName(m_Name.c_str());
 
-    mp_participant = Domain::createParticipant(PParam);
+    mp_participant = DomainParticipantFactory::get_instance()->create_participant(PParam);
 
     if (mp_participant == nullptr)
     {
@@ -75,7 +81,14 @@ bool TestPublisher::init(const std::string& topicName, int domain, eprosima::fas
     Wparam.topic.auto_fill_xtypes = false;
 
     //REGISTER THE TYPE
-    Domain::registerType(mp_participant, m_Type);
+    if (m_Type != nullptr)
+    {
+        mp_participant->register_type(m_Type);
+    }
+    else
+    {
+        return false;
+    }
 
     Wparam.topic.topicName = topicName;
     if (type_object != nullptr)
@@ -99,11 +112,13 @@ bool TestPublisher::init(const std::string& topicName, int domain, eprosima::fas
     // Wparam.topic.dataRepresentationQos = XML_DATA_REPRESENTATION
     // Wparam.topic.dataRepresentationQos = XCDR2_DATA_REPRESENTATION
 
-    mp_publisher = Domain::createPublisher(mp_participant,Wparam,(PublisherListener*)&m_pubListener);
+    mp_publisher = mp_participant->create_publisher(PUBLISHER_QOS_DEFAULT, Wparam, nullptr);
     if (mp_publisher == nullptr)
     {
         return false;
     }
+
+    writer_ = mp_publisher->create_datawriter(Wparam.topic, Wparam.qos, &m_pubListener);
 
     m_Data = m_Type->createData();
 
@@ -115,7 +130,6 @@ bool TestPublisher::init(const std::string& topicName, int domain, eprosima::fas
 TestPublisher::~TestPublisher()
 {
     m_Type->deleteData(m_Data);
-    Domain::removeParticipant(mp_participant);
 }
 
 void TestPublisher::waitDiscovery(bool expectMatch, int maxWait)
@@ -149,7 +163,9 @@ TestPublisher::PubListener::PubListener(TestPublisher* parent)
 {
 }
 
-void TestPublisher::PubListener::onPublicationMatched(Publisher* /*pub*/,MatchingInfo& info)
+void TestPublisher::PubListener::on_publication_matched(
+        eprosima::fastdds::DataWriter*,
+        eprosima::fastrtps::rtps::MatchingInfo& info)
 {
     if(info.status == MATCHED_MATCHING)
     {
@@ -183,7 +199,7 @@ bool TestPublisher::publish()
 {
     if (m_pubListener.n_matched > 0)
     {
-        if (mp_publisher->write(m_Data))
+        if (writer_->write(m_Data))
         {
             ++m_sentSamples;
             //std::cout << m_Name << " sent a total of " << m_sentSamples << " samples." << std::endl;

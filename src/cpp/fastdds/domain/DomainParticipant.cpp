@@ -244,3 +244,15 @@ fastrtps::rtps::ResourceEvent& DomainParticipant::get_resource_event() const
 {
     return impl_->get_resource_event();
 }
+
+Subscriber* DomainParticipant::lookup_subscriber(
+        const fastrtps::rtps::InstanceHandle_t& handle)
+{
+    return impl_->lookup_subscriber(handle);
+}
+
+Publisher* DomainParticipant::lookup_publisher(
+        const fastrtps::rtps::InstanceHandle_t& handle)
+{
+    return impl_->lookup_publisher(handle);
+}

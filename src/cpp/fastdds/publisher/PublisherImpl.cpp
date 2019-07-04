@@ -373,6 +373,11 @@ const Publisher* PublisherImpl::get_publisher() const
     return user_publisher_;
 }
 
+Publisher* PublisherImpl::get_publisher()
+{
+    return user_publisher_;
+}
+
 bool PublisherImpl::delete_contained_entities()
 {
     logError(PUBLISHER, "Operation not implemented");

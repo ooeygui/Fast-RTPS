@@ -523,6 +523,11 @@ const Publisher* DataWriter::get_publisher() const
     return publisher_->get_publisher();
 }
 
+Publisher* DataWriter::get_publisher()
+{
+    return publisher_->get_publisher();
+}
+
 void DataWriter::InnerDataWriterListener::on_writer_matched(
         RTPSWriter* /*writer*/,
         MatchingInfo& info)

@@ -292,15 +292,19 @@ ResponseCode DynamicTypeBuilder::apply_annotation_to_member(
 
 DynamicType_ptr DynamicTypeBuilder::build()
 {
-    if (descriptor_->is_consistent())
+    if (descriptor_ != nullptr)
     {
-        return DynamicTypeBuilderFactory::get_instance()->create_type(this);
+        if (descriptor_->is_consistent())
+        {
+            return DynamicTypeBuilderFactory::get_instance()->create_type(this);
+        }
+        else
+        {
+            logError(DYN_TYPES, "Error building type. The current descriptor isn't consistent.");
+        }
     }
-    else
-    {
-        logError(DYN_TYPES, "Error building type. The current descriptor isn't consistent.");
-        return nullptr;
-    }
+    logError(DYN_TYPES, "Error building type. The descriptor is null.");
+    return nullptr;
 }
 
 bool DynamicTypeBuilder::check_union_configuration(const MemberDescriptor* descriptor)

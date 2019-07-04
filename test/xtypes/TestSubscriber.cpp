@@ -18,20 +18,23 @@
  */
 
 #include "TestSubscriber.h"
-#include <fastrtps/participant/Participant.h>
+#include <fastdds/domain/DomainParticipantFactory.hpp>
+#include <fastdds/domain/DomainParticipant.hpp>
 #include <fastrtps/attributes/ParticipantAttributes.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
 #include <fastrtps/transport/UDPv4TransportDescriptor.h>
 #include <fastrtps/transport/TCPv4TransportDescriptor.h>
 #include <fastrtps/transport/UDPv6TransportDescriptor.h>
 #include <fastrtps/transport/TCPv6TransportDescriptor.h>
-#include <fastrtps/subscriber/Subscriber.h>
+#include <fastdds/subscriber/Subscriber.hpp>
+#include <fastdds/topic/DataReader.hpp>
 #include <fastrtps/utils/IPLocator.h>
 #include <gtest/gtest.h>
 
 
 #include <fastrtps/Domain.h>
 
+using namespace eprosima::fastdds;
 using namespace eprosima::fastrtps;
 using namespace eprosima::fastrtps::rtps;
 
@@ -43,7 +46,11 @@ TestSubscriber::TestSubscriber()
 {
 }
 
-bool TestSubscriber::init(const std::string& topicName, int domain, eprosima::fastrtps::TopicDataType* type,
+bool TestSubscriber::init(
+        const std::string& topicName,
+        int domain,
+        eprosima::fastrtps::rtps::TopicKind_t topic_kind,
+        eprosima::fastrtps::TopicDataType* type,
         const eprosima::fastrtps::types::TypeObject* type_object,
         const eprosima::fastrtps::types::TypeIdentifier* type_identifier,
         const eprosima::fastrtps::types::TypeInformation* type_info,
@@ -59,18 +66,23 @@ bool TestSubscriber::init(const std::string& topicName, int domain, eprosima::fa
     PParam.rtps.builtin.leaseDuration_announcementperiod = Duration_t(1, 0);
     PParam.rtps.setName(m_Name.c_str());
 
-    mp_participant = Domain::createParticipant(PParam);
+    mp_participant = DomainParticipantFactory::get_instance()->create_participant(PParam);
     if(mp_participant==nullptr)
+    {
         return false;
+    }
 
     //CREATE THE SUBSCRIBER
     SubscriberAttributes Rparam;
-    Rparam.topic.topicKind = m_Type->m_isGetKeyDefined ? WITH_KEY : NO_KEY;
-    Rparam.topic.topicDataType = m_Type->getName();
+    Rparam.topic.topicKind = topic_kind;
+    Rparam.topic.topicDataType = m_Type != nullptr ? m_Type->getName() : nullptr;
     Rparam.topic.auto_fill_xtypes = false;
 
     //REGISTER THE TYPE
-    Domain::registerType(mp_participant, m_Type);
+    if (m_Type != nullptr)
+    {
+        mp_participant->register_type(m_Type);
+    }
 
     Rparam.topic.topicName = topicName;
     if (type_object != nullptr)
@@ -95,14 +107,19 @@ bool TestSubscriber::init(const std::string& topicName, int domain, eprosima::fa
         Rparam.qos.representation = *dataRepresentationQos;
     }
 
-    mp_subscriber = Domain::createSubscriber(mp_participant,Rparam,(SubscriberListener*)&m_subListener);
+    mp_subscriber = mp_participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT, Rparam, nullptr);
 
     if (mp_subscriber == nullptr)
     {
         return false;
     }
 
-    m_Data = m_Type->createData();
+    reader_ = mp_subscriber->create_datareader(Rparam.topic, Rparam.qos, &m_subListener);
+
+    if (m_Type != nullptr)
+    {
+        m_Data = m_Type->createData();
+    }
 
     m_bInitialized = true;
 
@@ -111,8 +128,10 @@ bool TestSubscriber::init(const std::string& topicName, int domain, eprosima::fa
 
 TestSubscriber::~TestSubscriber()
 {
-    m_Type->deleteData(m_Data);
-    Domain::removeParticipant(mp_participant);
+    if (m_Type != nullptr)
+    {
+        m_Type->deleteData(m_Data);
+    }
 }
 
 TestSubscriber::SubListener::SubListener(TestSubscriber* parent)
@@ -154,7 +173,9 @@ void TestSubscriber::matched(bool unmatched)
         m_cvDiscovery.notify_one();
 }
 
-void TestSubscriber::SubListener::onSubscriptionMatched(Subscriber* /*sub*/,MatchingInfo& info)
+void TestSubscriber::SubListener::on_subscription_matched(
+        eprosima::fastdds::DataReader*,
+        eprosima::fastrtps::rtps::MatchingInfo& info)
 {
     if(info.status == MATCHED_MATCHING)
     {
@@ -168,9 +189,10 @@ void TestSubscriber::SubListener::onSubscriptionMatched(Subscriber* /*sub*/,Matc
     }
 }
 
-void TestSubscriber::SubListener::onNewDataMessage(Subscriber* sub)
+void TestSubscriber::SubListener::on_data_available(
+        eprosima::fastdds::DataReader* reader)
 {
-    if (sub->takeNextData(mParent->m_Data, &m_info))
+    if (reader->take_next_sample(mParent->m_Data, &m_info))
     {
         if (m_info.sampleKind == ALIVE)
         {

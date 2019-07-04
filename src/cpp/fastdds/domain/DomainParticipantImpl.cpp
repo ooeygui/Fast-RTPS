@@ -720,3 +720,71 @@ bool DomainParticipantImpl::exists_entity_id(
 
     return contains_entity(instance, false);
 }
+
+Subscriber* DomainParticipantImpl::lookup_subscriber(
+        const fastrtps::rtps::InstanceHandle_t& handle)
+{
+    // Look for subscribers
+    {
+        std::lock_guard<std::mutex> lock(mtx_subs_);
+        if (subscribers_by_handle_.find(handle) != subscribers_by_handle_.end())
+        {
+            return subscribers_by_handle_[handle];
+        }
+    }
+
+    // Look into subscribers
+    std::vector<DataReader*> readers;
+    {
+        std::lock_guard<std::mutex> lock(mtx_pubs_);
+        for (auto pit : subscribers_)
+        {
+            pit.second->get_datareaders(readers);
+        }
+    }
+
+    for (DataReader* reader : readers)
+    {
+        InstanceHandle_t h(reader->guid());
+        if (h == handle)
+        {
+            return reader->get_subscriber();
+        }
+    }
+
+    return nullptr;
+}
+
+Publisher* DomainParticipantImpl::lookup_publisher(
+        const fastrtps::rtps::InstanceHandle_t& handle)
+{
+    // Look for publishers
+    {
+        std::lock_guard<std::mutex> lock(mtx_pubs_);
+        if (publishers_by_handle_.find(handle) != publishers_by_handle_.end())
+        {
+            return publishers_by_handle_[handle];
+        }
+    }
+
+    // Look into publishers
+    std::vector<DataWriter*> writers;
+    {
+        std::lock_guard<std::mutex> lock(mtx_pubs_);
+        for (auto pit : publishers_)
+        {
+            pit.second->get_datawriters(writers);
+        }
+    }
+
+    for (DataWriter* writer : writers)
+    {
+        InstanceHandle_t h(writer->guid());
+        if (h == handle)
+        {
+            return writer->get_publisher();
+        }
+    }
+
+    return nullptr;
+}

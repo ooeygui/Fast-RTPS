@@ -594,6 +594,11 @@ const Subscriber* DataReader::get_subscriber() const
     return subscriber_->get_subscriber();
 }
 
+Subscriber* DataReader::get_subscriber()
+{
+    return subscriber_->get_subscriber();
+}
+
 bool DataReader::wait_for_historical_data(
         const Duration_t& max_wait) const
 {

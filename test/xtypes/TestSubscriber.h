@@ -22,7 +22,9 @@
 
 #include <fastrtps/fastrtps_fwd.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
-#include <fastrtps/subscriber/SubscriberListener.h>
+#include <fastdds/domain/DomainParticipant.hpp>
+#include <fastdds/topic/DataReaderListener.hpp>
+#include <fastdds/topic/DataReader.hpp>
 #include <fastrtps/subscriber/SampleInfo.h>
 #include <fastrtps/topic/TopicDataType.h>
 #include <fastrtps/types/TypeObjectFactory.h>
@@ -38,7 +40,11 @@ public:
     virtual ~TestSubscriber();
 
     //!Initialize the subscriber
-    bool init(const std::string& topicName, int domain, eprosima::fastrtps::TopicDataType* type,
+    bool init(
+        const std::string& topicName,
+        int domain,
+        eprosima::fastrtps::rtps::TopicKind_t topic_kind,
+        eprosima::fastrtps::TopicDataType* type,
         const eprosima::fastrtps::types::TypeObject* type_object,
         const eprosima::fastrtps::types::TypeIdentifier* type_identifier,
         const eprosima::fastrtps::types::TypeInformation* type_info,
@@ -73,8 +79,9 @@ public:
 private:
     std::string m_Name;
     eprosima::fastrtps::TopicDataType *m_Type;
-    eprosima::fastrtps::Participant* mp_participant;
-    eprosima::fastrtps::Subscriber* mp_subscriber;
+    eprosima::fastdds::DomainParticipant* mp_participant;
+    eprosima::fastdds::Subscriber* mp_subscriber;
+    eprosima::fastdds::DataReader* reader_;
     void *m_Data;
     bool m_bInitialized;
     std::mutex m_mDiscovery;
@@ -83,17 +90,19 @@ private:
     std::condition_variable cv_;
 
 public:
-    class SubListener :public eprosima::fastrtps::SubscriberListener
+    class SubListener :public eprosima::fastdds::DataReaderListener
     {
     public:
         SubListener() {}
         SubListener(TestSubscriber* parent);
 
-        ~SubListener() {};
+        ~SubListener() override {}
 
-        void onSubscriptionMatched(eprosima::fastrtps::Subscriber* sub, eprosima::fastrtps::rtps::MatchingInfo& info);
+        void on_subscription_matched(
+                eprosima::fastdds::DataReader* reader,
+                eprosima::fastrtps::rtps::MatchingInfo& info) override;
 
-        void onNewDataMessage(eprosima::fastrtps::Subscriber* sub);
+        void on_data_available(eprosima::fastdds::DataReader* reader) override;
 
         TestSubscriber* mParent;
         eprosima::fastrtps::SampleInfo_t m_info;

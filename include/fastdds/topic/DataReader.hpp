@@ -183,6 +183,8 @@ public:
 
     const Subscriber* get_subscriber() const;
 
+    Subscriber* get_subscriber();
+
     bool wait_for_historical_data(
             const fastrtps::Duration_t& max_wait) const;
 

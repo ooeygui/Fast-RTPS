@@ -1480,7 +1480,11 @@ DynamicType_ptr TypeObjectFactory::build_dynamic_type(const std::string& name, c
 
     DynamicTypeBuilder_ptr outputType = DynamicTypeBuilderFactory::get_instance()->create_custom_builder(&descriptor);
     //outputType->set_name(name);
-    return outputType->build();
+    if (outputType != nullptr)
+    {
+        return outputType->build();
+    }
+    return nullptr;
 }
 
 // TODO annotations

@@ -152,6 +152,11 @@ public:
         return user_subscriber_;
     }
 
+    Subscriber* get_subscriber()
+    {
+        return user_subscriber_;
+    }
+
     const fastrtps::rtps::InstanceHandle_t& get_instance_handle() const;
 
     //! Remove all listeners in the hierarchy to allow a quiet destruction
