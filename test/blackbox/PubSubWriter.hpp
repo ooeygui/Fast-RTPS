@@ -266,6 +266,7 @@ class PubSubWriter
             }
 
             eprosima::fastrtps::Domain::removeParticipant(participant_);
+            participant_ = nullptr;
         }
     }
 
