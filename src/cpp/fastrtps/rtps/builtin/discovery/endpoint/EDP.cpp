@@ -46,6 +46,7 @@
 #include <fastdds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/domain/DomainParticipant.hpp>
 #include <fastdds/subscriber/Subscriber.hpp>
+#include <fastdds/topic/TypeSupport.hpp>
 
 #include <fastrtps/rtps/participant/RTPSParticipantListener.h>
 
@@ -62,7 +63,7 @@ EDP::EDP(
     PDP* p,
     RTPSParticipantImpl* part)
     : mp_PDP(p)
-    , mp_RTPSParticipant(part) 
+    , mp_RTPSParticipant(part)
 {
 }
 
@@ -411,6 +412,54 @@ bool EDP::validMatching(
     if (!checkTypeValidation(wdata, rdata))
     {
         // TODO Trigger INCONSISTENT_TOPIC status change
+        // Are we discovering a type?
+        const types::TypeIdentifier& type_id = rdata->type_id().m_type_identifier;
+        const types::TypeObject& type_obj = rdata->type().m_type_object;
+        types::DynamicType_ptr dyn_type;
+        if (type_obj._d() != static_cast<octet>(0x00) // Writer shares a TypeObject
+                && wdata->type().m_type_object._d() == static_cast<octet>(0x00)) // But we don't have any
+        {
+            dyn_type = types::TypeObjectFactory::get_instance()->build_dynamic_type(
+                rdata->typeName().to_string(), &type_id, &type_obj);
+        }
+        else if (wdata->type().m_type_object._d() == static_cast<octet>(0x00)
+                 && type_id._d() != static_cast<octet>(0x00)
+                 && wdata->type_id().m_type_identifier._d() == static_cast<octet>(0x00))
+        {
+            dyn_type = types::TypeObjectFactory::get_instance()->build_dynamic_type(
+                rdata->typeName().to_string(), &type_id);
+        }
+
+        if (dyn_type != nullptr)
+        {
+            types::DynamicPubSubType type_support(dyn_type);
+            std::vector<fastdds::DomainParticipant*> participants =
+                fastdds::DomainParticipantFactory::get_instance()->lookup_participants(
+                    static_cast<uint8_t>(mp_RTPSParticipant->getAttributes().builtin.domainId));
+
+            if (!participants.empty())
+            {
+                for (fastdds::DomainParticipant* part : participants)
+                {
+                    fastdds::TypeSupport data_type = part->find_type(wdata->typeName().to_string());
+                    if (data_type != nullptr)
+                    {
+                        std::cout << "Discovering a type, but already registered!: " << data_type->getName() << std::endl;
+                        //return false;
+                        continue;
+                    }
+
+                    //part->register_type(&type_support);
+                    mp_RTPSParticipant->getListener()->on_type_discovery(
+                        part->rtps_participant(),
+                        wdata->topicName(),
+                        &type_id,
+                        &type_obj,
+                        dyn_type);
+                }
+            }
+        }
+
         return false;
     }
 
@@ -427,7 +476,7 @@ bool EDP::validMatching(
         return false;
     }
     if( wdata->m_qos.m_reliability.kind == BEST_EFFORT_RELIABILITY_QOS
-            && rdata->m_qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS) 
+            && rdata->m_qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS)
         //Means our writer is BE but the reader wants RE
     {
         logWarning(RTPS_EDP,"INCOMPATIBLE QOS (topic: "<< rdata->topicName() <<"):Remote Reader "
@@ -631,43 +680,48 @@ bool EDP::validMatching(const ReaderProxyData* rdata, const WriterProxyData* wda
         if (dyn_type != nullptr)
         {
             types::DynamicPubSubType type_support(dyn_type);
-            fastdds::DomainParticipant* part = fastdds::DomainParticipantFactory::get_instance()->lookup_participant(
-                static_cast<uint8_t>(mp_RTPSParticipant->getAttributes().builtin.domainId));
+            std::vector<fastdds::DomainParticipant*> participants =
+                fastdds::DomainParticipantFactory::get_instance()->lookup_participants(
+                    static_cast<uint8_t>(mp_RTPSParticipant->getAttributes().builtin.domainId));
 
-            if (part != nullptr) // Mechanism only available under DDS API
+            if (!participants.empty())
             {
-                TopicDataType* data_type = part->find_type(wdata->typeName().to_string());
-                if (data_type != nullptr)
+                for (fastdds::DomainParticipant* part : participants)
                 {
-                    std::cout << "Discovering a type, but already registered!: " << data_type->getName() << std::endl;
-                    return false;
+                    fastdds::TypeSupport data_type = part->find_type(wdata->typeName().to_string());
+                    if (data_type != nullptr)
+                    {
+                        std::cout << "Discovering a type, but already registered!: " << data_type->getName() << std::endl;
+                        //return false;
+                        continue;
+                    }
+
+                    //part->register_type(&type_support);
+                    mp_RTPSParticipant->getListener()->on_type_discovery(
+                        part->rtps_participant(),
+                        rdata->topicName(),
+                        &type_id,
+                        &type_obj,
+                        dyn_type);
+
+                    /*
+                    fastdds::Subscriber* subscriber = part->lookup_subscriber(rdata->key());
+                    if (subscriber != nullptr)
+                    {
+                        TopicAttributes topic_att;
+                        topic_att.type = type_obj;
+                        topic_att.type_id = type_id;
+                        topic_att.topicKind = rdata->topicKind();
+                        topic_att.topicName = rdata->topicName();
+                        topic_att.historyQos = subscriber->get_attributes().topic.historyQos;
+                        topic_att.topicDataType = wdata->typeName(); // Name from writer
+                        topic_att.resourceLimitsQos = subscriber->get_attributes().topic.resourceLimitsQos;
+                        subscriber->create_datareader(topic_att, DATAREADER_QOS_DEFAULT, nullptr);
+
+                        return false; // The new created data reader should match
+                    }
+                    */
                 }
-
-                //part->register_type(&type_support);
-                mp_RTPSParticipant->getListener()->on_type_discovery(
-                    part->rtps_participant(),
-                    rdata->topicName(),
-                    &type_id,
-                    &type_obj,
-                    dyn_type);
-
-                /*
-                fastdds::Subscriber* subscriber = part->lookup_subscriber(rdata->key());
-                if (subscriber != nullptr)
-                {
-                    TopicAttributes topic_att;
-                    topic_att.type = type_obj;
-                    topic_att.type_id = type_id;
-                    topic_att.topicKind = rdata->topicKind();
-                    topic_att.topicName = rdata->topicName();
-                    topic_att.historyQos = subscriber->get_attributes().topic.historyQos;
-                    topic_att.topicDataType = wdata->typeName(); // Name from writer
-                    topic_att.resourceLimitsQos = subscriber->get_attributes().topic.resourceLimitsQos;
-                    subscriber->create_datareader(topic_att, DATAREADER_QOS_DEFAULT, nullptr);
-
-                    return false; // The new created data reader should match
-                }
-                */
             }
         }
 
@@ -682,17 +736,17 @@ bool EDP::validMatching(const ReaderProxyData* rdata, const WriterProxyData* wda
         return false;
     }
     if(rdata->m_qos.m_reliability.kind == RELIABLE_RELIABILITY_QOS
-            && wdata->m_qos.m_reliability.kind == BEST_EFFORT_RELIABILITY_QOS) 
+            && wdata->m_qos.m_reliability.kind == BEST_EFFORT_RELIABILITY_QOS)
         //Means our reader is reliable but hte writer is not
     {
-        logWarning(RTPS_EDP,"INCOMPATIBLE QOS (topic: "<< wdata->topicName() << "): Remote Writer " 
+        logWarning(RTPS_EDP,"INCOMPATIBLE QOS (topic: "<< wdata->topicName() << "): Remote Writer "
             << wdata->guid() << " is Best Effort and local reader is RELIABLE " << endl;);
         return false;
     }
     if(rdata->m_qos.m_durability.kind > wdata->m_qos.m_durability.kind)
     {
         // TODO (MCC) Change log message
-        logWarning(RTPS_EDP, "INCOMPATIBLE QOS (topic: " << wdata->topicName() << "):RemoteWriter " 
+        logWarning(RTPS_EDP, "INCOMPATIBLE QOS (topic: " << wdata->topicName() << "):RemoteWriter "
             << wdata->guid() << " has VOLATILE DURABILITY and we want TRANSIENT_LOCAL" << endl;);
         return false;
     }

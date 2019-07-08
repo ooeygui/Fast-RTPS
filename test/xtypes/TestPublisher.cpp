@@ -28,6 +28,8 @@
 #include <fastrtps/transport/UDPv4TransportDescriptor.h>
 #include <fastrtps/transport/TCPv6TransportDescriptor.h>
 #include <fastrtps/transport/UDPv6TransportDescriptor.h>
+#include <fastrtps/types/DynamicTypePtr.h>
+#include <fastrtps/types/DynamicType.h>
 #include <fastrtps/Domain.h>
 #include <fastrtps/utils/eClock.h>
 #include <fastrtps/utils/IPLocator.h>
@@ -44,6 +46,7 @@ TestPublisher::TestPublisher()
     , m_bInitialized(false)
     , mp_participant(nullptr)
     , mp_publisher(nullptr)
+    , part_listener_(this)
     , m_pubListener(this)
 {
 }
@@ -51,7 +54,7 @@ TestPublisher::TestPublisher()
 bool TestPublisher::init(
         const std::string& topicName,
         int domain,
-        eprosima::fastrtps::TopicDataType* type,
+        eprosima::fastdds::TypeSupport type,
         const eprosima::fastrtps::types::TypeObject* type_object,
         const eprosima::fastrtps::types::TypeIdentifier* type_identifier,
         const eprosima::fastrtps::types::TypeInformation* type_info,
@@ -59,15 +62,15 @@ bool TestPublisher::init(
         const eprosima::fastrtps::DataRepresentationQosPolicy* dataRepresentationQos)
 {
     m_Name = name;
-    m_Type = type;
+    m_Type.swap(type);
 
     ParticipantAttributes PParam;
     PParam.rtps.builtin.domainId = domain;
-    PParam.rtps.builtin.leaseDuration = c_TimeInfinite;
-    PParam.rtps.builtin.leaseDuration_announcementperiod = Duration_t(1, 0);
+    PParam.rtps.builtin.discovery_config.leaseDuration = c_TimeInfinite;
+    PParam.rtps.builtin.discovery_config.leaseDuration_announcementperiod = Duration_t(1, 0);
     PParam.rtps.setName(m_Name.c_str());
 
-    mp_participant = DomainParticipantFactory::get_instance()->create_participant(PParam);
+    mp_participant = DomainParticipantFactory::get_instance()->create_participant(PParam, &part_listener_);
 
     if (mp_participant == nullptr)
     {
@@ -129,7 +132,11 @@ bool TestPublisher::init(
 
 TestPublisher::~TestPublisher()
 {
-    m_Type->deleteData(m_Data);
+    if (m_Type)
+    {
+        m_Type->deleteData(m_Data);
+    }
+    mp_participant->set_listener(nullptr);
 }
 
 void TestPublisher::waitDiscovery(bool expectMatch, int maxWait)
@@ -146,6 +153,23 @@ void TestPublisher::waitDiscovery(bool expectMatch, int maxWait)
     else
     {
         ASSERT_EQ(m_pubListener.n_matched, 0);
+    }
+}
+
+void TestPublisher::waitTypeDiscovery(bool expectMatch, int maxWait)
+{
+    std::unique_lock<std::mutex> lock(mtx_type_discovery_);
+
+    if(!part_listener_.discovered_)
+        cv_type_discovery_.wait_for(lock, std::chrono::seconds(maxWait));
+
+    if (expectMatch)
+    {
+        ASSERT_TRUE(part_listener_.discovered_);
+    }
+    else
+    {
+        ASSERT_FALSE(part_listener_.discovered_);
     }
 }
 
@@ -176,6 +200,20 @@ void TestPublisher::PubListener::on_publication_matched(
     {
         std::cout << mParent->m_Name << " unmatched."<<std::endl;
     }
+}
+
+void TestPublisher::PartListener::on_type_discovery(
+        eprosima::fastdds::DomainParticipant*,
+        const eprosima::fastrtps::string_255& topic,
+        const eprosima::fastrtps::types::TypeIdentifier*,
+        const eprosima::fastrtps::types::TypeObject*,
+        eprosima::fastrtps::types::DynamicType_ptr dyn_type)
+{
+    std::cout << "Discovered type: " << dyn_type->get_name() << " on topic: " << topic << std::endl;
+    std::lock_guard<std::mutex> lock(parent_->mtx_type_discovery_);
+    discovered_ = true;
+    parent_->disc_type_ = dyn_type;
+    parent_->cv_type_discovery_.notify_one();
 }
 
 void TestPublisher::runThread()

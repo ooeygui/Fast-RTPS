@@ -51,7 +51,7 @@ class RTPSParticipantImpl;
  * definitions required by the specific implementations.
  * @ingroup DISCOVERY_MODULE
  */
-class EDP 
+class EDP
 {
     public:
         /**
@@ -149,14 +149,14 @@ class EDP
          * @param rdata Pointer to the ReaderProxyData object.
          * @return True if the two can be matched.
          */
-        static bool validMatching(const WriterProxyData* wdata, const ReaderProxyData* rdata);
+        bool validMatching(const WriterProxyData* wdata, const ReaderProxyData* rdata);
         /**
          * Check the validity of a matching between a RTPSReader and a WriterProxyData object.
          * @param rdata Pointer to the ReaderProxyData object.
          * @param wdata Pointer to the WriterProxyData object.
          * @return True if the two can be matched.
          */
-        static bool validMatching(const ReaderProxyData* rdata, const WriterProxyData* wdata);
+        bool validMatching(const ReaderProxyData* rdata, const WriterProxyData* wdata);
 
         /**
          * Unpair a WriterProxyData object from all local readers.

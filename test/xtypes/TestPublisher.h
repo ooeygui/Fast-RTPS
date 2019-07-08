@@ -23,10 +23,11 @@
 #include <fastrtps/fastrtps_fwd.h>
 #include <fastrtps/attributes/PublisherAttributes.h>
 #include <fastdds/domain/DomainParticipant.hpp>
+#include <fastdds/domain/DomainParticipantListener.hpp>
 #include <fastdds/topic/DataWriterListener.hpp>
 #include <fastdds/topic/DataWriter.hpp>
 #include <fastrtps/subscriber/SampleInfo.h>
-#include <fastrtps/topic/TopicDataType.h>
+#include <fastdds/topic/TypeSupport.hpp>
 #include <condition_variable>
 #include <fastrtps/types/TypeObjectFactory.h>
 #include <fastrtps/rtps/common/Types.h>
@@ -42,7 +43,7 @@ public:
     bool init(
         const std::string& topicName,
         int domain,
-        eprosima::fastrtps::TopicDataType* type,
+        eprosima::fastdds::TypeSupport type,
         const eprosima::fastrtps::types::TypeObject* type_object,
         const eprosima::fastrtps::types::TypeIdentifier* type_identifier,
         const eprosima::fastrtps::types::TypeInformation* type_info,
@@ -60,16 +61,23 @@ public:
 
     void waitDiscovery(bool expectMatch = true, int maxWait = 10);
 
+    void waitTypeDiscovery(bool expectMatch = true, int maxWait = 10);
+
     void matched();
 
     bool isMatched() { return m_pubListener.n_matched > 0; }
 
     void send() { waitDiscovery(); publish(); }
 
+    eprosima::fastrtps::types::DynamicType_ptr discovered_type() const
+    {
+        return disc_type_;
+    }
+
 private:
     std::string m_Name;
 
-    eprosima::fastrtps::TopicDataType *m_Type;
+    eprosima::fastdds::TypeSupport m_Type;
 
     int m_iSamples;
 
@@ -83,13 +91,37 @@ private:
 
     std::mutex m_mDiscovery;
 
+    std::mutex mtx_type_discovery_;
+
     std::condition_variable m_cvDiscovery;
+
+    std::condition_variable cv_type_discovery_;
 
     eprosima::fastdds::DomainParticipant* mp_participant;
 
     eprosima::fastdds::Publisher* mp_publisher;
 
     eprosima::fastdds::DataWriter* writer_;
+
+    eprosima::fastrtps::types::DynamicType_ptr disc_type_;
+
+    class PartListener : public eprosima::fastdds::DomainParticipantListener
+    {
+    public:
+        PartListener(TestPublisher* parent) : parent_(parent), discovered_(false) {}
+        ~PartListener() override {}
+
+        void on_type_discovery(
+                eprosima::fastdds::DomainParticipant* participant,
+                const eprosima::fastrtps::string_255& topic,
+                const eprosima::fastrtps::types::TypeIdentifier* identifier,
+                const eprosima::fastrtps::types::TypeObject* object,
+                eprosima::fastrtps::types::DynamicType_ptr dyn_type) override;
+
+        TestPublisher* parent_;
+        std::atomic<bool> discovered_;
+
+    } part_listener_;
 
     class PubListener:public eprosima::fastdds::DataWriterListener
     {

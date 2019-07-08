@@ -67,6 +67,9 @@ public:
     RTPS_DllAPI DomainParticipant* lookup_participant(
             uint8_t domain_id) const;
 
+    RTPS_DllAPI std::vector<DomainParticipant*> lookup_participants(
+            uint8_t domain_id) const;
+
     //!Fills participant_attributes with the default values.
     RTPS_DllAPI bool get_default_participant_qos(
             fastrtps::ParticipantAttributes& participant_qos) const;

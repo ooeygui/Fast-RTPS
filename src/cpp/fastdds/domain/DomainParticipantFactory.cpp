@@ -197,6 +197,25 @@ DomainParticipant* DomainParticipantFactory::lookup_participant(
     return nullptr;
 }
 
+std::vector<DomainParticipant*> DomainParticipantFactory::lookup_participants(
+        uint8_t domain_id) const
+{
+    std::lock_guard<std::mutex> guard(mtx_participants_);
+
+    std::vector<DomainParticipant*> result;
+    auto it = participants_.find(domain_id);
+    if (it != participants_.end())
+    {
+        const std::vector<DomainParticipantImpl*>& v = it->second;
+        for (auto pit = v.begin(); pit != v.end(); ++pit)
+        {
+            result.push_back((*pit)->get_participant());
+        }
+    }
+
+    return result;
+}
+
 bool DomainParticipantFactory::get_default_participant_qos(
         ParticipantAttributes& participant_attributes) const
 {

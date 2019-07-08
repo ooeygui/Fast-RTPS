@@ -23,14 +23,16 @@
 #include <fastrtps/fastrtps_fwd.h>
 #include <fastrtps/attributes/SubscriberAttributes.h>
 #include <fastdds/domain/DomainParticipant.hpp>
+#include <fastdds/domain/DomainParticipantListener.hpp>
 #include <fastdds/topic/DataReaderListener.hpp>
 #include <fastdds/topic/DataReader.hpp>
 #include <fastrtps/subscriber/SampleInfo.h>
-#include <fastrtps/topic/TopicDataType.h>
+#include <fastdds/topic/TypeSupport.hpp>
 #include <fastrtps/types/TypeObjectFactory.h>
 #include <fastrtps/rtps/common/Types.h>
 
 #include <condition_variable>
+#include <atomic>
 
 class TestSubscriber
 {
@@ -44,7 +46,7 @@ public:
         const std::string& topicName,
         int domain,
         eprosima::fastrtps::rtps::TopicKind_t topic_kind,
-        eprosima::fastrtps::TopicDataType* type,
+        eprosima::fastdds::TypeSupport type,
         const eprosima::fastrtps::types::TypeObject* type_object,
         const eprosima::fastrtps::types::TypeIdentifier* type_identifier,
         const eprosima::fastrtps::types::TypeInformation* type_info,
@@ -58,6 +60,7 @@ public:
     // Auxiliar test methods
     bool isInitialized() const { return m_bInitialized; }
     void waitDiscovery(bool expectMatch = true, int maxWait = 10);
+    void waitTypeDiscovery(bool expectMatch = true, int maxWait = 10);
     void matched(bool unmatched = false);
     bool isMatched() { return m_subListener.n_matched > 0; }
     uint32_t samplesReceived() { return m_subListener.n_samples; }
@@ -76,20 +79,54 @@ public:
         return samplesReceived();
     }
 
+    eprosima::fastrtps::types::DynamicType_ptr discovered_type() const
+    {
+        return disc_type_;
+    }
+
+    bool register_discovered_type();
+
+    eprosima::fastdds::DataReader* create_datareader();
+
+    void delete_datareader(eprosima::fastdds::DataReader* reader);
+
 private:
     std::string m_Name;
-    eprosima::fastrtps::TopicDataType *m_Type;
+    eprosima::fastdds::TypeSupport m_Type;
     eprosima::fastdds::DomainParticipant* mp_participant;
     eprosima::fastdds::Subscriber* mp_subscriber;
     eprosima::fastdds::DataReader* reader_;
     void *m_Data;
     bool m_bInitialized;
     std::mutex m_mDiscovery;
+    std::mutex mtx_type_discovery_;
     std::mutex mutex_;
     std::condition_variable m_cvDiscovery;
+    std::condition_variable cv_type_discovery_;
     std::condition_variable cv_;
+    eprosima::fastrtps::types::DynamicType_ptr disc_type_;
+    eprosima::fastrtps::TopicAttributes topic_att;
+    eprosima::fastrtps::ReaderQos reader_qos;
 
 public:
+    class PartListener : public eprosima::fastdds::DomainParticipantListener
+    {
+    public:
+        PartListener(TestSubscriber* parent) : parent_(parent), discovered_(false) {}
+        ~PartListener() override {}
+
+        void on_type_discovery(
+                eprosima::fastdds::DomainParticipant* participant,
+                const eprosima::fastrtps::string_255& topic,
+                const eprosima::fastrtps::types::TypeIdentifier* identifier,
+                const eprosima::fastrtps::types::TypeObject* object,
+                eprosima::fastrtps::types::DynamicType_ptr dyn_type) override;
+
+        TestSubscriber* parent_;
+        std::atomic<bool> discovered_;
+
+    } part_listener_;
+
     class SubListener :public eprosima::fastdds::DataReaderListener
     {
     public:

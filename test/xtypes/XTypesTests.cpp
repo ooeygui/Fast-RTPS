@@ -25,6 +25,7 @@
 #include <fastrtps/types/TypeObjectFactory.h>
 #include <fastrtps/qos/QosPolicies.h>
 #include <fastrtps/log/Log.h>
+#include <fastdds/topic/TypeSupport.hpp>
 
 #include <thread>
 #include <memory>
@@ -33,6 +34,7 @@
 #include <gtest/gtest.h>
 
 using namespace eprosima::fastrtps;
+using namespace eprosima::fastdds;
 using namespace eprosima::fastrtps::rtps;
 
 // TODO - Remove DISABLED when XTYPES are implemented.
@@ -175,11 +177,14 @@ TEST_F(XTypes, TypeObjectV1SameType)
  * TEST TYPE DISCOVERY
  * RETRIEVE PUB's TYPE
 */
-TEST_F(XTypes, TypeDiscovery)
+TEST_F(XTypes, TypeDiscoverySubs)
 {
-    BasicStructPubSubType type;
-    const TypeObject* type_obj = GetMinimalBasicStructObject();
-    const TypeIdentifier* type_id = GetBasicStructIdentifier(false);
+    //BasicStructPubSubType type;
+    //BasicBadStructPubSubType type_bad;
+    TypeSupport type(new BasicStructPubSubType());
+    TypeSupport type_bad(new BasicBadStructPubSubType()); // TODO allow subscribe to "nullptr"?
+    const TypeObject* type_obj = GetCompleteBasicStructObject();
+    const TypeIdentifier* type_id = GetBasicStructIdentifier(true);
     TestPublisher pub;
     TestSubscriber sub;
     //TypeInformation* type_info = nullptr; // Not using it
@@ -198,15 +203,68 @@ TEST_F(XTypes, TypeDiscovery)
     //typeConQos.m_prevent_type_widening = false;
     //typeConQos.m_force_type_validation = false;
 
-    pub.init("TypeObjectV1SameType", 10, &type, type_obj, type_id, nullptr, "Pub1", &dataRepQos);
+    pub.init("TypeDiscoverySubs", 12, type, type_obj, type_id, nullptr, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeObjectV1SameType", 10, NO_KEY, nullptr, nullptr, nullptr, nullptr, "Sub1", &dataRepQos, nullptr);
+    sub.init("TypeDiscoverySubs", 12, NO_KEY, type_bad, nullptr, nullptr, nullptr, "Sub1", &dataRepQos, nullptr);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
-    sub.waitDiscovery(true, 3);
+    sub.waitTypeDiscovery(true, 3);
+    //pub.waitDiscovery(true, 3);
+
+    types::DynamicType_ptr disc_type = sub.discovered_type();
+    ASSERT_TRUE(disc_type != nullptr);
+
+    sub.register_discovered_type();
+    DataReader* reader = sub.create_datareader();
+
     pub.waitDiscovery(true, 3);
+    sub.waitDiscovery(true, 3);
+
+    reader->set_listener(nullptr);
+    sub.delete_datareader(reader);
+}
+
+/*
+ * TEST TYPE DISCOVERY
+ * RETRIEVE SUB's TYPE
+*/
+TEST_F(XTypes, TypeDiscoveryPubs)
+{
+    //BasicStructPubSubType type;
+    //BasicBadStructPubSubType type_bad;
+    TypeSupport type(new BasicStructPubSubType());
+    TypeSupport type_bad(new BasicBadStructPubSubType()); // TODO allow subscribe to "nullptr"?
+    const TypeObject* type_obj = GetCompleteBasicStructObject();
+    const TypeIdentifier* type_id = GetBasicStructIdentifier(true);
+    TestPublisher pub;
+    TestSubscriber sub;
+    //TypeInformation* type_info = nullptr; // Not using it
+
+    DataRepresentationQosPolicy dataRepQos;
+    dataRepQos.m_value.push_back(DataRepresentationId_t::XCDR_DATA_REPRESENTATION);
+    //dataRepQos.m_value.push_back(DataRepresentationId_t::XML_DATA_REPRESENTATION);
+    //dataRepQos.m_value.push_back(DataRepresentationId_t::XCDR2_DATA_REPRESENTATION);
+
+    //TypeConsistencyEnforcementQosPolicy typeConQos;
+    //typeConQos.m_kind = TypeConsistencyKind::ALLOW_TYPE_COERCION;
+    //typeConQos.m_kind = TypeConsistencyKind::DISALLOW_TYPE_COERCION;
+    //typeConQos.m_ignore_sequence_bounds = true;
+    //typeConQos.m_ignore_string_bounds = true;
+    //typeConQos.m_ignore_member_names = true;
+    //typeConQos.m_prevent_type_widening = false;
+    //typeConQos.m_force_type_validation = false;
+
+    pub.init("TypeDiscoveryPubs", 11, type_bad, nullptr, nullptr, nullptr, "Pub1", &dataRepQos);
+    ASSERT_TRUE(pub.isInitialized());
+
+    sub.init("TypeDiscoveryPubs", 11, NO_KEY, type, type_obj, type_id, nullptr, "Sub1", &dataRepQos, nullptr);
+    ASSERT_TRUE(sub.isInitialized());
+
+    // Wait for discovery.
+    pub.waitTypeDiscovery(true, 3);
+    //pub.waitDiscovery(true, 3);
 }
 
 /*

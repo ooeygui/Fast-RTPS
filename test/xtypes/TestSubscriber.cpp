@@ -26,6 +26,8 @@
 #include <fastrtps/transport/TCPv4TransportDescriptor.h>
 #include <fastrtps/transport/UDPv6TransportDescriptor.h>
 #include <fastrtps/transport/TCPv6TransportDescriptor.h>
+#include <fastrtps/types/DynamicTypePtr.h>
+#include <fastrtps/types/DynamicType.h>
 #include <fastdds/subscriber/Subscriber.hpp>
 #include <fastdds/topic/DataReader.hpp>
 #include <fastrtps/utils/IPLocator.h>
@@ -42,6 +44,7 @@ TestSubscriber::TestSubscriber()
     : mp_participant(nullptr)
     , mp_subscriber(nullptr)
     , m_bInitialized(false)
+    , part_listener_(this)
     , m_subListener(this)
 {
 }
@@ -50,7 +53,7 @@ bool TestSubscriber::init(
         const std::string& topicName,
         int domain,
         eprosima::fastrtps::rtps::TopicKind_t topic_kind,
-        eprosima::fastrtps::TopicDataType* type,
+        eprosima::fastdds::TypeSupport type,
         const eprosima::fastrtps::types::TypeObject* type_object,
         const eprosima::fastrtps::types::TypeIdentifier* type_identifier,
         const eprosima::fastrtps::types::TypeInformation* type_info,
@@ -59,14 +62,14 @@ bool TestSubscriber::init(
         const eprosima::fastrtps::TypeConsistencyEnforcementQosPolicy* typeConsistencyQos)
 {
     m_Name = name;
-    m_Type = type;
+    m_Type.swap(type);
     ParticipantAttributes PParam;
     PParam.rtps.builtin.domainId = domain;
-    PParam.rtps.builtin.leaseDuration = c_TimeInfinite;
-    PParam.rtps.builtin.leaseDuration_announcementperiod = Duration_t(1, 0);
+    PParam.rtps.builtin.discovery_config.leaseDuration = c_TimeInfinite;
+    PParam.rtps.builtin.discovery_config.leaseDuration_announcementperiod = Duration_t(1, 0);
     PParam.rtps.setName(m_Name.c_str());
 
-    mp_participant = DomainParticipantFactory::get_instance()->create_participant(PParam);
+    mp_participant = DomainParticipantFactory::get_instance()->create_participant(PParam, &part_listener_);
     if(mp_participant==nullptr)
     {
         return false;
@@ -122,6 +125,8 @@ bool TestSubscriber::init(
     }
 
     m_bInitialized = true;
+    topic_att = Rparam.topic;
+    reader_qos = Rparam.qos;
 
     return true;
 }
@@ -132,6 +137,7 @@ TestSubscriber::~TestSubscriber()
     {
         m_Type->deleteData(m_Data);
     }
+    mp_participant->set_listener(nullptr);
 }
 
 TestSubscriber::SubListener::SubListener(TestSubscriber* parent)
@@ -155,6 +161,23 @@ void TestSubscriber::waitDiscovery(bool expectMatch, int maxWait)
     else
     {
         ASSERT_EQ(m_subListener.n_matched, 0);
+    }
+}
+
+void TestSubscriber::waitTypeDiscovery(bool expectMatch, int maxWait)
+{
+    std::unique_lock<std::mutex> lock(mtx_type_discovery_);
+
+    if(!part_listener_.discovered_)
+        cv_type_discovery_.wait_for(lock, std::chrono::seconds(maxWait));
+
+    if (expectMatch)
+    {
+        ASSERT_TRUE(part_listener_.discovered_);
+    }
+    else
+    {
+        ASSERT_FALSE(part_listener_.discovered_);
     }
 }
 
@@ -201,6 +224,37 @@ void TestSubscriber::SubListener::on_data_available(
             //std::cout << mParent->m_Name << " received a total of " << n_samples << " samples." << std::endl;
         }
     }
+}
+
+void TestSubscriber::PartListener::on_type_discovery(
+        eprosima::fastdds::DomainParticipant*,
+        const eprosima::fastrtps::string_255& topic,
+        const eprosima::fastrtps::types::TypeIdentifier*,
+        const eprosima::fastrtps::types::TypeObject*,
+        eprosima::fastrtps::types::DynamicType_ptr dyn_type)
+{
+    std::cout << "Discovered type: " << dyn_type->get_name() << " on topic: " << topic << std::endl;
+    std::lock_guard<std::mutex> lock(parent_->mtx_type_discovery_);
+    discovered_ = true;
+    parent_->disc_type_ = dyn_type;
+    parent_->cv_type_discovery_.notify_one();
+}
+
+DataReader* TestSubscriber::create_datareader()
+{
+    topic_att.topicDataType = disc_type_->get_name();
+    return mp_subscriber->create_datareader(topic_att, reader_qos, &m_subListener);
+}
+
+void TestSubscriber::delete_datareader(eprosima::fastdds::DataReader* reader)
+{
+    mp_subscriber->delete_datareader(reader);
+}
+
+bool TestSubscriber::register_discovered_type()
+{
+    TypeSupport type(disc_type_);
+    mp_participant->register_type(type, disc_type_->get_name());
 }
 
 void TestSubscriber::run()
