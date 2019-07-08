@@ -110,9 +110,11 @@ void DataWriter::disable()
 
 DataWriter::~DataWriter()
 {
+    set_listener(nullptr);
     if(writer_ != nullptr)
     {
         logInfo(PUBLISHER, guid().entityId << " in topic: " << type_->getName());
+        writer_->set_listener(nullptr);
     }
 
     RTPSDomain::removeRTPSWriter(writer_);

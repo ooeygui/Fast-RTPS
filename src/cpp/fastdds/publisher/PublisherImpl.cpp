@@ -256,6 +256,7 @@ bool PublisherImpl::delete_datawriter(
     auto it = writers_.find(writer->get_topic().getTopicName().to_string());
     if (it != writers_.end() && it->second == writer)
     {
+        writer->set_listener(nullptr);
         writers_.erase(it);
         return true;
     }

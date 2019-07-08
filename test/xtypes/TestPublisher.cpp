@@ -136,7 +136,6 @@ TestPublisher::~TestPublisher()
     {
         m_Type->deleteData(m_Data);
     }
-    mp_participant->set_listener(nullptr);
 }
 
 void TestPublisher::waitDiscovery(bool expectMatch, int maxWait)

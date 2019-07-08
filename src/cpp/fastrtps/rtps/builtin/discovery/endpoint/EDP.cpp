@@ -444,8 +444,7 @@ bool EDP::validMatching(
                     fastdds::TypeSupport data_type = part->find_type(wdata->typeName().to_string());
                     if (data_type != nullptr)
                     {
-                        std::cout << "Discovering a type, but already registered!: " << data_type->getName() << std::endl;
-                        //return false;
+                        // Discovering a type, but already registered
                         continue;
                     }
 
@@ -691,8 +690,7 @@ bool EDP::validMatching(const ReaderProxyData* rdata, const WriterProxyData* wda
                     fastdds::TypeSupport data_type = part->find_type(wdata->typeName().to_string());
                     if (data_type != nullptr)
                     {
-                        std::cout << "Discovering a type, but already registered!: " << data_type->getName() << std::endl;
-                        //return false;
+                        // Discovering a type, but already registered!
                         continue;
                     }
 

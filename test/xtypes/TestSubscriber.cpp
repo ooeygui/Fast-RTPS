@@ -137,7 +137,6 @@ TestSubscriber::~TestSubscriber()
     {
         m_Type->deleteData(m_Data);
     }
-    mp_participant->set_listener(nullptr);
 }
 
 TestSubscriber::SubListener::SubListener(TestSubscriber* parent)
@@ -254,7 +253,7 @@ void TestSubscriber::delete_datareader(eprosima::fastdds::DataReader* reader)
 bool TestSubscriber::register_discovered_type()
 {
     TypeSupport type(disc_type_);
-    mp_participant->register_type(type, disc_type_->get_name());
+    return mp_participant->register_type(type, disc_type_->get_name());
 }
 
 void TestSubscriber::run()

@@ -99,9 +99,11 @@ void DataReader::disable()
 
 DataReader::~DataReader()
 {
+    set_listener(nullptr);
     if(reader_ != nullptr)
     {
         logInfo(DATA_READER, guid().entityId << " in topic: " << topic_att_.topicName);
+        reader_->setListener(nullptr);
     }
 
     RTPSDomain::removeRTPSReader(reader_);

@@ -119,7 +119,6 @@ DomainParticipantImpl::~DomainParticipantImpl()
 
     {
         std::lock_guard<std::mutex> lock(mtx_subs_);
-
         for (auto sub_it = subscribers_.begin(); sub_it != subscribers_.end(); ++sub_it)
         {
             delete sub_it->second;
@@ -139,6 +138,7 @@ DomainParticipantImpl::~DomainParticipantImpl()
     }
 
     delete participant_;
+    participant_ = nullptr;
 }
 
 
@@ -151,6 +151,7 @@ bool DomainParticipantImpl::delete_publisher(
     {
         if (pit != publishers_.end())
         {
+            pit->second->set_listener(nullptr);
             publishers_by_handle_.erase(publishers_by_handle_.find(pit->second->get_instance_handle()));
             delete pit->second;
             publishers_.erase(pit);
@@ -169,6 +170,7 @@ bool DomainParticipantImpl::delete_subscriber(
     {
         if (sit != subscribers_.end())
         {
+            sit->second->set_listener(nullptr);
             subscribers_by_handle_.erase(subscribers_by_handle_.find(sit->second->get_instance_handle()));
             delete sit->second;
             subscribers_.erase(sit);

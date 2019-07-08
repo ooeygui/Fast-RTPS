@@ -215,6 +215,7 @@ bool SubscriberImpl::delete_datareader(
     auto it = readers_.find(reader->get_topic().getTopicName().to_string());
     if (it != readers_.end() && it->second == reader)
     {
+        reader->set_listener(nullptr);
         readers_.erase(it);
         return true;
     }
