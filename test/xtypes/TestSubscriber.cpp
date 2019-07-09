@@ -110,17 +110,17 @@ bool TestSubscriber::init(
         Rparam.qos.representation = *dataRepresentationQos;
     }
 
-    mp_subscriber = mp_participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT, Rparam, nullptr);
-
-    if (mp_subscriber == nullptr)
-    {
-        return false;
-    }
-
-    reader_ = mp_subscriber->create_datareader(Rparam.topic, Rparam.qos, &m_subListener);
-
+    // Create sub and reader if topic was provided
     if (m_Type != nullptr)
     {
+        mp_subscriber = mp_participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT, Rparam, nullptr);
+
+        if (mp_subscriber == nullptr)
+        {
+            return false;
+        }
+
+        reader_ = mp_subscriber->create_datareader(Rparam.topic, Rparam.qos, &m_subListener);
         m_Data = m_Type->createData();
     }
 
@@ -241,6 +241,18 @@ void TestSubscriber::PartListener::on_type_discovery(
 
 DataReader* TestSubscriber::create_datareader()
 {
+    if (mp_subscriber == nullptr)
+    {
+        SubscriberAttributes Rparam;
+        Rparam.topic = topic_att;
+        Rparam.qos = reader_qos;
+        mp_subscriber = mp_participant->create_subscriber(SUBSCRIBER_QOS_DEFAULT, Rparam, nullptr);
+
+        if (mp_subscriber == nullptr)
+        {
+            return nullptr;
+        }
+    }
     topic_att.topicDataType = disc_type_->get_name();
     return mp_subscriber->create_datareader(topic_att, reader_qos, &m_subListener);
 }

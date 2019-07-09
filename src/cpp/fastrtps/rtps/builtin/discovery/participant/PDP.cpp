@@ -47,9 +47,15 @@
 #include <fastrtps/rtps/history/WriterHistory.h>
 #include <fastrtps/rtps/history/ReaderHistory.h>
 
+#include <fastrtps/types/TypeObjectFactory.h>
+#include <fastrtps/types/DynamicPubSubType.h>
 
 #include <fastrtps/utils/TimeConversion.h>
 #include <fastrtps/utils/IPLocator.h>
+
+#include <fastdds/domain/DomainParticipantFactory.hpp>
+#include <fastdds/domain/DomainParticipant.hpp>
+#include <fastdds/topic/TypeSupport.hpp>
 
 #include <fastrtps/log/Log.h>
 
@@ -236,7 +242,7 @@ void PDP::announceParticipantState(
             if(mp_PDPWriterHistory->getHistorySize() > 0)
                 mp_PDPWriterHistory->remove_min_change();
             // TODO(Ricardo) Change DISCOVERY_PARTICIPANT_DATA_MAX_SIZE with getLocalParticipantProxyData()->size().
-            change = mp_PDPWriter->new_change([]() -> uint32_t 
+            change = mp_PDPWriter->new_change([]() -> uint32_t
                 {
                     return DISCOVERY_PARTICIPANT_DATA_MAX_SIZE;
                 }
@@ -276,7 +282,7 @@ void PDP::announceParticipantState(
 
         if(mp_PDPWriterHistory->getHistorySize() > 0)
             mp_PDPWriterHistory->remove_min_change();
-        change = mp_PDPWriter->new_change([]() -> uint32_t 
+        change = mp_PDPWriter->new_change([]() -> uint32_t
             {
                 return DISCOVERY_PARTICIPANT_DATA_MAX_SIZE;
             }
@@ -492,6 +498,7 @@ bool PDP::addReaderProxyData(
                         info.status = ReaderDiscoveryInfo::CHANGED_QOS_READER;
                         info.info = *rdata;
                         listener->onReaderDiscovery(mp_RTPSParticipant->getUserRTPSParticipant(), std::move(info));
+                        check_and_notify_type_discovery(listener, *rdata);
                     }
 
                     return true;
@@ -508,6 +515,7 @@ bool PDP::addReaderProxyData(
                 info.status = ReaderDiscoveryInfo::DISCOVERED_READER;
                 info.info = *rdata;
                 listener->onReaderDiscovery(mp_RTPSParticipant->getUserRTPSParticipant(), std::move(info));
+                check_and_notify_type_discovery(listener, *rdata);
             }
 
             return true;
@@ -555,6 +563,7 @@ bool PDP::addWriterProxyData(
                         info.status = WriterDiscoveryInfo::CHANGED_QOS_WRITER;
                         info.info = *wdata;
                         listener->onWriterDiscovery(mp_RTPSParticipant->getUserRTPSParticipant(), std::move(info));
+                        check_and_notify_type_discovery(listener, *wdata);
                     }
 
                     return true;
@@ -571,6 +580,7 @@ bool PDP::addWriterProxyData(
                 info.status = WriterDiscoveryInfo::DISCOVERED_WRITER;
                 info.info = *wdata;
                 listener->onWriterDiscovery(mp_RTPSParticipant->getUserRTPSParticipant(), std::move(info));
+                check_and_notify_type_discovery(listener, *wdata);
             }
 
             return true;
@@ -699,6 +709,84 @@ CDRMessage_t PDP::get_participant_proxy_data_serialized(Endianness_t endian)
     }
 
     return cdr_msg;
+}
+
+void PDP::check_and_notify_type_discovery(
+        RTPSParticipantListener* listener,
+        const WriterProxyData& wdata) const
+{
+    check_and_notify_type_discovery(
+        listener,
+        wdata.topicName(),
+        wdata.typeName(),
+        wdata.type_id().m_type_identifier,
+        wdata.type().m_type_object);
+}
+
+void PDP::check_and_notify_type_discovery(
+        RTPSParticipantListener* listener,
+        const ReaderProxyData& rdata) const
+{
+    check_and_notify_type_discovery(
+        listener,
+        rdata.topicName(),
+        rdata.typeName(),
+        rdata.type_id().m_type_identifier,
+        rdata.type().m_type_object);
+}
+
+void PDP::check_and_notify_type_discovery(
+        RTPSParticipantListener* listener,
+        const string_255 topic_name,
+        const string_255 type_name,
+        const types::TypeIdentifier& type_id,
+        const types::TypeObject& type_obj) const
+{
+    // Are we discovering a type?
+    types::DynamicType_ptr dyn_type;
+    if (type_obj._d() == types::EK_COMPLETE) // Writer shares a Complete TypeObject
+    {
+        dyn_type = types::TypeObjectFactory::get_instance()->build_dynamic_type(
+            type_name.to_string(), &type_id, &type_obj);
+    }
+    else if (type_id._d() != static_cast<octet>(0x00)
+             && type_id._d() < types::EK_MINIMAL) // Writer shares a TypeIdentifier that doesn't need TypeObject
+    {
+        dyn_type = types::TypeObjectFactory::get_instance()->build_dynamic_type(
+            type_name.to_string(), &type_id);
+    }
+
+    if (dyn_type != nullptr)
+    {
+        types::DynamicPubSubType type_support(dyn_type);
+
+        std::vector<fastdds::DomainParticipant*> participants =
+            fastdds::DomainParticipantFactory::get_instance()->lookup_participants(
+                static_cast<uint8_t>(mp_RTPSParticipant->getAttributes().builtin.domainId));
+
+        // Get current DomainParticipant
+        fastdds::DomainParticipant* domain_participant = nullptr;
+        for (fastdds::DomainParticipant* part : participants)
+        {
+            if (part->rtps_participant() == mp_RTPSParticipant->getUserRTPSParticipant())
+            {
+                domain_participant = part;
+                break;
+            }
+        }
+
+        fastdds::TypeSupport data_type = domain_participant->find_type(type_name.to_string());
+        if (data_type.get() == nullptr)
+        {
+            // Discovering a type
+            listener->on_type_discovery(
+                mp_RTPSParticipant->getUserRTPSParticipant(),
+                topic_name,
+                &type_id,
+                &type_obj,
+                dyn_type);
+        }
+    }
 }
 
 } /* namespace rtps */

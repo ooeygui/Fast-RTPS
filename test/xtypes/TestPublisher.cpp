@@ -59,7 +59,8 @@ bool TestPublisher::init(
         const eprosima::fastrtps::types::TypeIdentifier* type_identifier,
         const eprosima::fastrtps::types::TypeInformation* type_info,
         const std::string& name,
-        const eprosima::fastrtps::DataRepresentationQosPolicy* dataRepresentationQos)
+        const eprosima::fastrtps::DataRepresentationQosPolicy* dataRepresentationQos,
+        eprosima::fastrtps::rtps::TopicKind_t topic_kind)
 {
     m_Name = name;
     m_Type.swap(type);
@@ -79,18 +80,14 @@ bool TestPublisher::init(
 
     // CREATE THE PUBLISHER
     PublisherAttributes Wparam;
-    Wparam.topic.topicKind = m_Type->m_isGetKeyDefined ? WITH_KEY : NO_KEY;
-    Wparam.topic.topicDataType = m_Type->getName();
     Wparam.topic.auto_fill_xtypes = false;
+    Wparam.topic.topicKind = topic_kind;
+    Wparam.topic.topicDataType = m_Type != nullptr ? m_Type->getName() : nullptr;
 
     //REGISTER THE TYPE
     if (m_Type != nullptr)
     {
         mp_participant->register_type(m_Type);
-    }
-    else
-    {
-        return false;
     }
 
     Wparam.topic.topicName = topicName;
@@ -115,15 +112,18 @@ bool TestPublisher::init(
     // Wparam.topic.dataRepresentationQos = XML_DATA_REPRESENTATION
     // Wparam.topic.dataRepresentationQos = XCDR2_DATA_REPRESENTATION
 
-    mp_publisher = mp_participant->create_publisher(PUBLISHER_QOS_DEFAULT, Wparam, nullptr);
-    if (mp_publisher == nullptr)
+    if (m_Type != nullptr)
     {
-        return false;
+        mp_publisher = mp_participant->create_publisher(PUBLISHER_QOS_DEFAULT, Wparam, nullptr);
+        if (mp_publisher == nullptr)
+        {
+            return false;
+        }
+
+        writer_ = mp_publisher->create_datawriter(Wparam.topic, Wparam.qos, &m_pubListener);
+
+        m_Data = m_Type->createData();
     }
-
-    writer_ = mp_publisher->create_datawriter(Wparam.topic, Wparam.qos, &m_pubListener);
-
-    m_Data = m_Type->createData();
 
     m_bInitialized = true;
 

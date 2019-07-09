@@ -41,12 +41,6 @@
 #include <fastrtps/log/Log.h>
 
 #include <fastrtps/types/TypeObjectFactory.h>
-#include <fastrtps/types/DynamicPubSubType.h>
-
-#include <fastdds/domain/DomainParticipantFactory.hpp>
-#include <fastdds/domain/DomainParticipant.hpp>
-#include <fastdds/subscriber/Subscriber.hpp>
-#include <fastdds/topic/TypeSupport.hpp>
 
 #include <fastrtps/rtps/participant/RTPSParticipantListener.h>
 
@@ -412,53 +406,6 @@ bool EDP::validMatching(
     if (!checkTypeValidation(wdata, rdata))
     {
         // TODO Trigger INCONSISTENT_TOPIC status change
-        // Are we discovering a type?
-        const types::TypeIdentifier& type_id = rdata->type_id().m_type_identifier;
-        const types::TypeObject& type_obj = rdata->type().m_type_object;
-        types::DynamicType_ptr dyn_type;
-        if (type_obj._d() != static_cast<octet>(0x00) // Writer shares a TypeObject
-                && wdata->type().m_type_object._d() == static_cast<octet>(0x00)) // But we don't have any
-        {
-            dyn_type = types::TypeObjectFactory::get_instance()->build_dynamic_type(
-                rdata->typeName().to_string(), &type_id, &type_obj);
-        }
-        else if (wdata->type().m_type_object._d() == static_cast<octet>(0x00)
-                 && type_id._d() != static_cast<octet>(0x00)
-                 && wdata->type_id().m_type_identifier._d() == static_cast<octet>(0x00))
-        {
-            dyn_type = types::TypeObjectFactory::get_instance()->build_dynamic_type(
-                rdata->typeName().to_string(), &type_id);
-        }
-
-        if (dyn_type != nullptr)
-        {
-            types::DynamicPubSubType type_support(dyn_type);
-            std::vector<fastdds::DomainParticipant*> participants =
-                fastdds::DomainParticipantFactory::get_instance()->lookup_participants(
-                    static_cast<uint8_t>(mp_RTPSParticipant->getAttributes().builtin.domainId));
-
-            if (!participants.empty())
-            {
-                for (fastdds::DomainParticipant* part : participants)
-                {
-                    fastdds::TypeSupport data_type = part->find_type(wdata->typeName().to_string());
-                    if (data_type != nullptr)
-                    {
-                        // Discovering a type, but already registered
-                        continue;
-                    }
-
-                    //part->register_type(&type_support);
-                    mp_RTPSParticipant->getListener()->on_type_discovery(
-                        part->rtps_participant(),
-                        wdata->topicName(),
-                        &type_id,
-                        &type_obj,
-                        dyn_type);
-                }
-            }
-        }
-
         return false;
     }
 
@@ -658,71 +605,6 @@ bool EDP::validMatching(const ReaderProxyData* rdata, const WriterProxyData* wda
     if (!checkTypeValidation(wdata, rdata))
     {
         // TODO Trigger INCONSISTENT_TOPIC status change
-        // Are we discovering a type?
-        const types::TypeIdentifier& type_id = wdata->type_id().m_type_identifier;
-        const types::TypeObject& type_obj = wdata->type().m_type_object;
-        types::DynamicType_ptr dyn_type;
-        if (type_obj._d() != static_cast<octet>(0x00) // Writer shares a TypeObject
-                && rdata->type().m_type_object._d() == static_cast<octet>(0x00)) // But we don't have any
-        {
-            dyn_type = types::TypeObjectFactory::get_instance()->build_dynamic_type(
-                wdata->typeName().to_string(), &type_id, &type_obj);
-        }
-        else if (rdata->type().m_type_object._d() == static_cast<octet>(0x00)
-                 && type_id._d() != static_cast<octet>(0x00)
-                 && rdata->type_id().m_type_identifier._d() == static_cast<octet>(0x00))
-        {
-            dyn_type = types::TypeObjectFactory::get_instance()->build_dynamic_type(
-                wdata->typeName().to_string(), &type_id);
-        }
-
-        if (dyn_type != nullptr)
-        {
-            types::DynamicPubSubType type_support(dyn_type);
-            std::vector<fastdds::DomainParticipant*> participants =
-                fastdds::DomainParticipantFactory::get_instance()->lookup_participants(
-                    static_cast<uint8_t>(mp_RTPSParticipant->getAttributes().builtin.domainId));
-
-            if (!participants.empty())
-            {
-                for (fastdds::DomainParticipant* part : participants)
-                {
-                    fastdds::TypeSupport data_type = part->find_type(wdata->typeName().to_string());
-                    if (data_type != nullptr)
-                    {
-                        // Discovering a type, but already registered!
-                        continue;
-                    }
-
-                    //part->register_type(&type_support);
-                    mp_RTPSParticipant->getListener()->on_type_discovery(
-                        part->rtps_participant(),
-                        rdata->topicName(),
-                        &type_id,
-                        &type_obj,
-                        dyn_type);
-
-                    /*
-                    fastdds::Subscriber* subscriber = part->lookup_subscriber(rdata->key());
-                    if (subscriber != nullptr)
-                    {
-                        TopicAttributes topic_att;
-                        topic_att.type = type_obj;
-                        topic_att.type_id = type_id;
-                        topic_att.topicKind = rdata->topicKind();
-                        topic_att.topicName = rdata->topicName();
-                        topic_att.historyQos = subscriber->get_attributes().topic.historyQos;
-                        topic_att.topicDataType = wdata->typeName(); // Name from writer
-                        topic_att.resourceLimitsQos = subscriber->get_attributes().topic.resourceLimitsQos;
-                        subscriber->create_datareader(topic_att, DATAREADER_QOS_DEFAULT, nullptr);
-
-                        return false; // The new created data reader should match
-                    }
-                    */
-                }
-            }
-        }
-
         return false;
     }
 

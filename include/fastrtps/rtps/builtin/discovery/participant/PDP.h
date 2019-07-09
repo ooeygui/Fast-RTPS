@@ -37,6 +37,7 @@ class RTPSReader;
 class WriterHistory;
 class ReaderHistory;
 class RTPSParticipantImpl;
+class RTPSParticipantListener;
 class BuiltinProtocols;
 class EDP;
 class RemoteParticipantLeaseDuration;
@@ -96,7 +97,7 @@ class PDP
      * Force the sending of our local DPD to all remote RTPSParticipants and multicast Locators.
      * @param new_change If true a new change (with new seqNum) is created and sent;
      *    if false the last change is re-sent
-     * @param dispose Sets change kind to NOT_ALIVE_DISPOSED_UNREGISTERED 
+     * @param dispose Sets change kind to NOT_ALIVE_DISPOSED_UNREGISTERED
      * @param wparams allows to identify the change
      */
     virtual void announceParticipantState(
@@ -194,7 +195,7 @@ class PDP
     virtual void notifyAboveRemoteEndpoints(const ParticipantProxyData& pdata) = 0;
 
     /**
-     * Some PDP classes require EDP matching with update PDP DATAs like EDPStatic 
+     * Some PDP classes require EDP matching with update PDP DATAs like EDPStatic
      * @return true if EDP endpoinst must be match
      */
     virtual bool updateInfoMatchesEDP() { return false; }
@@ -227,7 +228,7 @@ class PDP
      * @return pointer to the EDP object.
      */
     inline EDP* getEDP(){return mp_EDP;}
-    
+
     /**
      * Get a cons_iterator to the beginning of the RTPSParticipant Proxies.
      * @return const_iterator.
@@ -290,6 +291,21 @@ class PDP
     ReaderHistory* mp_PDPReaderHistory;
     //!Participant data atomic access assurance
     std::recursive_mutex* mp_mutex;
+
+    void check_and_notify_type_discovery(
+            RTPSParticipantListener* listener,
+            const WriterProxyData& wdata) const;
+
+    void check_and_notify_type_discovery(
+            RTPSParticipantListener* listener,
+            const ReaderProxyData& rdata) const;
+
+    void check_and_notify_type_discovery(
+            RTPSParticipantListener* listener,
+            const string_255 topic_name,
+            const string_255 type_name,
+            const types::TypeIdentifier& type_id,
+            const types::TypeObject& type_obj) const;
 
 };
 

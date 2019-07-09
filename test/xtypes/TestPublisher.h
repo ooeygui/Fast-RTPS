@@ -48,7 +48,8 @@ public:
         const eprosima::fastrtps::types::TypeIdentifier* type_identifier,
         const eprosima::fastrtps::types::TypeInformation* type_info,
         const std::string& name,
-        const eprosima::fastrtps::DataRepresentationQosPolicy* dataRepresentationQos);
+        const eprosima::fastrtps::DataRepresentationQosPolicy* dataRepresentationQos,
+        eprosima::fastrtps::rtps::TopicKind_t topic_kind = eprosima::fastrtps::rtps::NO_KEY);
 
     //!Publish a sample
     bool publish();

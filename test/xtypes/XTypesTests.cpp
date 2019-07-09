@@ -181,10 +181,7 @@ TEST_F(XTypes, TypeObjectV1SameType)
 */
 TEST_F(XTypes, TypeDiscoverySubs)
 {
-    //BasicStructPubSubType type;
-    //BasicBadStructPubSubType type_bad;
     TypeSupport type(new BasicStructPubSubType());
-    TypeSupport type_bad(new BasicBadStructPubSubType()); // TODO allow subscribe to "nullptr"?
     const TypeObject* type_obj = GetCompleteBasicStructObject();
     const TypeIdentifier* type_id = GetBasicStructIdentifier(true);
     TestPublisher pub;
@@ -208,7 +205,7 @@ TEST_F(XTypes, TypeDiscoverySubs)
     pub.init("TypeDiscoverySubs", 12, type, type_obj, type_id, nullptr, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
-    sub.init("TypeDiscoverySubs", 12, NO_KEY, type_bad, nullptr, nullptr, nullptr, "Sub1", &dataRepQos, nullptr);
+    sub.init("TypeDiscoverySubs", 12, NO_KEY, nullptr, nullptr, nullptr, nullptr, "Sub1", &dataRepQos, nullptr);
     ASSERT_TRUE(sub.isInitialized());
 
     // Wait for discovery.
@@ -234,10 +231,7 @@ TEST_F(XTypes, TypeDiscoverySubs)
 */
 TEST_F(XTypes, TypeDiscoveryPubs)
 {
-    //BasicStructPubSubType type;
-    //BasicBadStructPubSubType type_bad;
     TypeSupport type(new BasicStructPubSubType());
-    TypeSupport type_bad(new BasicBadStructPubSubType()); // TODO allow subscribe to "nullptr"?
     const TypeObject* type_obj = GetCompleteBasicStructObject();
     const TypeIdentifier* type_id = GetBasicStructIdentifier(true);
     TestPublisher pub;
@@ -258,7 +252,7 @@ TEST_F(XTypes, TypeDiscoveryPubs)
     //typeConQos.m_prevent_type_widening = false;
     //typeConQos.m_force_type_validation = false;
 
-    pub.init("TypeDiscoveryPubs", 11, type_bad, nullptr, nullptr, nullptr, "Pub1", &dataRepQos);
+    pub.init("TypeDiscoveryPubs", 11, nullptr, nullptr, nullptr, nullptr, "Pub1", &dataRepQos);
     ASSERT_TRUE(pub.isInitialized());
 
     sub.init("TypeDiscoveryPubs", 11, NO_KEY, type, type_obj, type_id, nullptr, "Sub1", &dataRepQos, nullptr);
