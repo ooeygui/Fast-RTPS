@@ -75,12 +75,18 @@ DomainParticipantFactory::~DomainParticipantFactory()
         // Delete participants
         for (auto vit : participants_)
         {
-            it.second->disable();
+            for (auto pit : vit.second)
+            {
+                pit->disable();
+            }
         }
         // Delete participants
         for (auto it : participants_)
         {
-            delete it.second;
+            for (auto pit : it.second)
+            {
+                delete pit;
+            }
         }
         participants_.clear();
     }

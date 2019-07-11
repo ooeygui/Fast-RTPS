@@ -46,6 +46,12 @@
 #include <fastrtps/transport/UDPv6Transport.h>
 #include <fastrtps/transport/test_UDPv4Transport.h>
 
+#include <fastrtps/types/TypeObjectFactory.h>
+#include <fastrtps/types/DynamicTypeBuilderFactory.h>
+#include <fastrtps/types/DynamicPubSubType.h>
+#include <fastrtps/types/DynamicType.h>
+#include <fastrtps/types/DynamicTypeMember.h>
+
 #include <fastrtps/log/Log.h>
 
 #include <chrono>
@@ -248,6 +254,11 @@ Publisher* DomainParticipantImpl::create_publisher(
     std::lock_guard<std::mutex> lock(mtx_pubs_);
     publishers_by_handle_[pub_handle] = pub;
     publishers_[pub] = pubimpl;
+
+    if (att.topic.auto_fill_xtypes)
+    {
+        register_dynamic_type_to_factories(att.topic.getTopicDataType().to_string());
+    }
 
     return pub;
 }
@@ -526,6 +537,11 @@ Subscriber* DomainParticipantImpl::create_subscriber(
     subscribers_by_handle_[sub_handle] = sub;
     subscribers_[sub] = subimpl;
 
+    if (att.topic.auto_fill_xtypes)
+    {
+        register_dynamic_type_to_factories(att.topic.getTopicDataType().to_string());
+    }
+
     return sub;
 }
 
@@ -570,7 +586,53 @@ bool DomainParticipantImpl::register_type(
     logInfo(PARTICIPANT, "Type " << type_name << " registered.");
     std::lock_guard<std::mutex> lock(mtx_types_);
     types_.insert(std::make_pair(type_name, type));
+
     return true;
+}
+
+bool DomainParticipantImpl::register_dynamic_type_to_factories(
+        const std::string& type_name) const
+{
+    using namespace  eprosima::fastrtps::types;
+    TypeSupport t = find_type(type_name);
+    DynamicPubSubType* dpst = dynamic_cast<DynamicPubSubType*>(t.get());
+    if (dpst != nullptr) // Registering a dynamic type.
+    {
+        TypeObjectFactory* objectFactory = TypeObjectFactory::get_instance();
+        DynamicTypeBuilderFactory* dynFactory = DynamicTypeBuilderFactory::get_instance();
+        const TypeIdentifier* id = objectFactory->get_type_identifier_trying_complete(type_name);
+        if (id == nullptr)
+        {
+            std::map<MemberId, DynamicTypeMember*> membersMap;
+            dpst->GetDynamicType()->get_all_members(membersMap);
+            std::vector<const MemberDescriptor*> members;
+            for (auto it : membersMap)
+            {
+                members.push_back(it.second->get_descriptor());
+            }
+            TypeObject typeObj;
+            dynFactory->build_type_object(dpst->GetDynamicType()->get_type_descriptor(), typeObj, &members);
+            // Minimal too
+            dynFactory->build_type_object(dpst->GetDynamicType()->get_type_descriptor(), typeObj, &members, false);
+            const TypeIdentifier *type_id2 = objectFactory->get_type_identifier(dpst->getName());
+            const TypeObject *type_obj = objectFactory->get_type_object(dpst->getName());
+            if (type_id2 == nullptr)
+            {
+                logError(DOMAIN_PARTICIPANT, "Cannot register dynamic type " << dpst->getName());
+            }
+            else
+            {
+                objectFactory->add_type_object(dpst->getName(), type_id2, type_obj);
+
+                // Complete, just to make sure it is generated
+                const TypeIdentifier *type_id_complete = objectFactory->get_type_identifier(dpst->getName(), true);
+                const TypeObject *type_obj_complete = objectFactory->get_type_object(dpst->getName(), true);
+                objectFactory->add_type_object(dpst->getName(), type_id_complete, type_obj_complete); // Add complete
+            }
+        }
+    }
+
+    return false; // Isn't a registered dynamic type.
 }
 
 bool DomainParticipantImpl::unregister_type(

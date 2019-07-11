@@ -205,6 +205,11 @@ DataReader* SubscriberImpl::create_datareader(
         readers_[topic_att.getTopicDataType().to_string()] = reader;
     }
 
+    if (topic_att.auto_fill_xtypes)
+    {
+        participant_->register_dynamic_type_to_factories(topic_att.getTopicDataType().to_string());
+    }
+
     return reader;
 }
 
