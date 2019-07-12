@@ -206,7 +206,7 @@ void Log::GetTimestamp(std::string &timestamp)
 //    (void)now_c;
 //    (void)ms;
 #else
-    stream << std::put_time(localtime(&now_c), "%F %T") << "." << std::setw(3) << std::setfill('0') << ms << " ";
+    //stream << std::put_time(localtime(&now_c), "%F %T") << "." << std::setw(3) << std::setfill('0') << ms << " ";
 #endif
     timestamp = stream.str();
 }
