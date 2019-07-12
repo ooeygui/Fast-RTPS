@@ -2192,8 +2192,16 @@ void DynamicTypeBuilderFactory::set_annotation_default_value(
         break;
         case TK_CHAR16:
         {
+        #ifdef USE_BOOST_CONVERT
+            std::string value = member->get_default_value();
+            apv.wchar_value(
+                boost::locale::conv::utf_to_utf<wchar_t>(
+                  value.c_str(),
+                  value.c_str() + value.size())[0]);
+        #else
             std::wstring_convert<std::codecvt_utf8<wchar_t>> conv;
             apv.wchar_value(conv.from_bytes(member->get_default_value()).c_str()[0]);
+        #endif
         }
         break;
         case TK_STRING8:
@@ -2203,8 +2211,16 @@ void DynamicTypeBuilderFactory::set_annotation_default_value(
         break;
         case TK_STRING16:
         {
+        #ifdef USE_BOOST_CONVERT
+            std::string value = member->get_default_value();
+            apv.string16_value(
+                boost::locale::conv::utf_to_utf<wchar_t>(
+                  value.c_str(),
+                  value.c_str() + value.size()));
+        #else
             std::wstring_convert<std::codecvt_utf8<wchar_t>> conv;
             apv.string16_value(conv.from_bytes(member->get_default_value()));
+        #endif
         }
         break;
         case TK_ENUM:

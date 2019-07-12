@@ -28,8 +28,14 @@
 #include <array>
 #include <string>
 #include <vector>
-#include <codecvt>
 #include <locale>
+
+#ifdef USE_BOOST_CONVERT
+  #include <boost/locale/encoding_utf.hpp>
+#else
+  #include <codecvt>
+#endif
+
 
 namespace eprosima
 {
@@ -631,8 +637,14 @@ public:
                 return std::to_string(m_enumerated_value);
             case TK_STRING16:
             {
+            #ifdef USE_BOOST_CONVERT
+                return boost::locale::conv::utf_to_utf<char>(
+                    m_string16_value.c_str(),
+                    m_string16_value.c_str() + m_string16_value.size());
+            #else
                 std::wstring_convert<std::codecvt_utf8<wchar_t>> conv;
                 return conv.to_bytes(m_string16_value);
+            #endif
             }
             case TK_STRING8:
             case TK_NONE: // Cheat!
@@ -714,8 +726,15 @@ public:
             break;
             case TK_CHAR16:
             {
+            #ifdef USE_BOOST_CONVERT
+                wchar_value(
+                    boost::locale::conv::utf_to_utf<wchar_t>(
+                      value.c_str(),
+                      value.c_str() + value.size())[0]);
+            #else
                 std::wstring_convert<std::codecvt_utf8<wchar_t>> conv;
                 wchar_value(conv.from_bytes(value).c_str()[0]);
+            #endif
             }
             break;
             case TK_STRING8:
@@ -726,8 +745,15 @@ public:
             break;
             case TK_STRING16:
             {
+            #ifdef USE_BOOST_CONVERT
+                string16_value(
+                    boost::locale::conv::utf_to_utf<wchar_t>(
+                      value.c_str(),
+                      value.c_str() + value.size()));
+            #else
                 std::wstring_convert<std::codecvt_utf8<wchar_t>> conv;
                 string16_value(conv.from_bytes(value));
+            #endif
             }
             break;
             case TK_ENUM:

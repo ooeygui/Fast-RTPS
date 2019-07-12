@@ -95,6 +95,18 @@ message(STATUS "Version: ${PROJECT_VERSION}")
 message(STATUS "To change the version modify the file configure.ac")
 
 ###############################################################################
+# Use BOOST instead of std::codecvt
+###############################################################################
+option(USE_BOOST_CONVERT "Use Boost.Locale instead of std::codecvt for string conversions" OFF)
+if(USE_BOOST_CONVERT)
+  set(Boost_USE_STATIC_LIBS ON)
+  set(Boost_USE_MULTITHREADED ON)
+  find_package(Boost REQUIRED)
+  message(STATUS "Using Boost.Locale instead of std::codecvt")
+  add_definitions(-DUSE_BOOST_CONVERT)
+endif()
+
+###############################################################################
 # Generation of windows installers.
 ###############################################################################
 option(EPROSIMA_INSTALLER "Activate the creation of a build to create windows installers" OFF)

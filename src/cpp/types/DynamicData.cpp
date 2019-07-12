@@ -22,9 +22,13 @@
 #include <fastrtps/types/DynamicDataPtr.h>
 #include <fastrtps/log/Log.h>
 #include <fastcdr/Cdr.h>
-
 #include <locale>
-#include <codecvt>
+
+#ifdef USE_BOOST_CONVERT
+  #include <boost/locale/encoding_utf.hpp>
+#else
+  #include <codecvt>
+#endif
 
 namespace eprosima {
 namespace fastrtps {
@@ -1151,11 +1155,19 @@ void DynamicData::get_value(
     {
         wchar_t value(0);
         get_char16_value(value, id);
-        using convert_type = std::codecvt_utf8<wchar_t>;
-        std::wstring_convert<convert_type, wchar_t> converter;
         std::wstring temp = L"";
         temp += value;
+    #ifdef USE_BOOST_CONVERT
+        sOutValue = boost::locale::conv::utf_to_utf<char>(
+            temp.c_str(),
+            temp.c_str() + temp.size());
+    #else
+        using convert_type = std::codecvt_utf8<wchar_t>;
+        std::wstring_convert<convert_type, wchar_t> converter;
         sOutValue = converter.to_bytes(temp);
+    #endif
+
+
     }
     break;
     case TK_BOOLEAN:
@@ -1179,11 +1191,17 @@ void DynamicData::get_value(
     break;
     case TK_STRING16:
     {
-        using convert_type = std::codecvt_utf8<wchar_t>;
-        std::wstring_convert<convert_type, wchar_t> converter;
         std::wstring value;
         get_wstring_value(value, id);
+    #ifdef USE_BOOST_CONVERT
+        sOutValue = boost::locale::conv::utf_to_utf<char>(
+            value.c_str(),
+            value.c_str() + value.size());
+    #else
+        using convert_type = std::codecvt_utf8<wchar_t>;
+        std::wstring_convert<convert_type, wchar_t> converter;
         sOutValue = converter.to_bytes(value);
+    #endif
     }
     break;
     case TK_ENUM:
