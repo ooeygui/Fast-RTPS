@@ -132,9 +132,9 @@ TEST(BlackBox, PubSubInterfaceWhitelistUnicast)
     GetIP4s(interfaces);
 
     std::shared_ptr<UDPv4TransportDescriptor> descriptor = std::make_shared<UDPv4TransportDescriptor>();
-    for(const auto& interface : interfaces)
+    for(const auto& interface_instance : interfaces)
     {
-        descriptor->interfaceWhiteList.push_back(interface.name);
+        descriptor->interfaceWhiteList.push_back(interface_instance.name);
     }
 
     reader.reliability(eprosima::fastrtps::RELIABLE_RELIABILITY_QOS).history_depth(10).
