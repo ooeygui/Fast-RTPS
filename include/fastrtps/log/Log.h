@@ -22,6 +22,7 @@
 #include <sstream>
 #include <atomic>
 #include <regex>
+#define _INTERNALDEBUG
 
 /**
  * eProsima log layer. Logging categories and verbosities can be specified dynamically at runtime. However, even on a category
@@ -251,7 +252,7 @@ class LogConsumer
 #define logWarning_(cat, msg)
 #endif
 
-#if (defined(__INTERNALDEBUG) || defined(_INTERNALDEBUG)) && (defined(_DEBUG) || defined(__DEBUG)) && (!defined(LOG_NO_INFO))
+#if (defined(__INTERNALDEBUG) || defined(_INTERNALDEBUG))
 #define logInfo_(cat, msg)                                                                              \
     {                                                                                                   \
         if (Log::GetVerbosity() >= Log::Kind::Info)                                                     \
